@@ -1,5 +1,6 @@
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
+from app.models import db
 from urllib.parse import quote_plus
 
 app = Flask(__name__)
@@ -27,8 +28,10 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  # Um zusätzliche Warnunge
 
 #blueprints importieren + registrieren
 from app.views.index import bp_index
+from app.views.index import bp_info
 
 app.register_blueprint(bp_index, url_prefix="")
+app.register_blueprint(bp_info, url_prefix="/info")
 
 
 

@@ -2,7 +2,7 @@
 <html lang="de">
 
 <head>
-  <title>Spindvergabe</title>
+  <title>Seminarvergabe</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="{{ url_for('static', filename='styles/w3.css') }}">
@@ -45,8 +45,8 @@
       <a class="w3-bar-item w3-button w3-padding-large w3-hide-medium w3-hide-large w3-right" href="javascript:void(0)"
         onclick="openNavbar()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
       <a href="{{ url_for('bp_index.index')}}" class="w3-bar-item w3-button w3-padding-large">Home</a>
-      <a href="{{ url_for('bp_mieten.mieten')}}" class="w3-bar-item w3-button w3-padding-large w3-hide-small">Themen Suche</a>
-      <a href="{{ url_for('bp_preise.preise')}}" class="w3-bar-item w3-button w3-padding-large w3-hide-small">Regeln</a>
+      <a href="{{ url_for('bp_index.index')}}" class="w3-bar-item w3-button w3-padding-large w3-hide-small">Themen Suche</a>
+      <a href="{{ url_for('bp_index.index')}}" class="w3-bar-item w3-button w3-padding-large w3-hide-small">Regeln</a>
         <div class="w3-dropdown-hover w3-hide-small">
         <button class="w3-padding-large w3-button" title="Info">Info<i class="fa fa-caret-down"
             style="padding-left: 10px;"></i></button>
@@ -58,21 +58,21 @@
         </div>
       </div>
 
-      <a href="{{ url_for('bp_profile.profile')}}" class="w3-padding-large w3-button w3-right">Profil</a>
-      <!-- <a hidden href="{{ url_for('bp_admin.admin')}}" class="w3-padding-large w3-button w3-right" id="adminButtonDesktop">Admin</a> -->
+      <a href="{{ url_for('bp_index.index')}}" class="w3-padding-large w3-button w3-right">Profil</a>
+      <!-- <a hidden href="{{ url_for('bp_index.index')}}" class="w3-padding-large w3-button w3-right" id="adminButtonDesktop">Admin</a> -->
     </div>
   </div>
 
   <!-- Navbar on small screens (remove the onclick attribute if you want the navbar to always show on top of the content when clicking on the links) -->
   <div id="navDemo" class="w3-bar-block w3-fids-color w3-hide w3-hide-large w3-hide-medium w3-top"
     style="margin-top:46px">
-    <a href="{{ url_for('bp_mieten.mieten')}}" class="w3-bar-item w3-button w3-padding-large"
+    <a href="{{ url_for('bp_index.index')}}" class="w3-bar-item w3-button w3-padding-large"
       onclick="openNavbar()">Mieten</a>
-    <a href="{{ url_for('bp_preise.preise')}}" class="w3-bar-item w3-button w3-padding-large"
+    <a href="{{ url_for('bp_index.index')}}" class="w3-bar-item w3-button w3-padding-large"
       onclick="openNavbar()">Preise</a>
     <a href="{{ url_for('bp_info.info')}}" class="w3-bar-item w3-button w3-padding-large"
       onclick="openNavbar()">Info</a>
-    <!-- <a id="adminButtonMobile"  href="{{ url_for('bp_admin.admin')}}" class="w3-bar-item w3-button w3-padding-large w3-black"
+    <!-- <a id="adminButtonMobile"  href="{{ url_for('bp_index.index')}}" class="w3-bar-item w3-button w3-padding-large w3-black"
       onclick="openNavbar()" hidden>Admin</a> -->
   </div>
 
@@ -90,7 +90,7 @@
       <a class="own-footer" href="https://www.uni-regensburg.de/datenschutz/startseite/index.html"
         style="padding-left: 10px; padding-right: 10px;">Datenschutz</a>
       <a class="own-footer" href="{{ url_for('bp_info.agb')}}" style="padding-left: 10px; padding-right: 10px;">AGB</a>
-      <a class="own-footer" href="{{ url_for('bp_admin.admin')}}" style="padding-left: 10px; padding-right: 10px;">Admin</a>
+      <a class="own-footer" href="{{ url_for('bp_info.impressum')}}" style="padding-left: 10px; padding-right: 10px;">Admin</a>
     </div>
   </footer>
 

@@ -117,3 +117,45 @@ class Projekt_Betreuer(db.Model):
     def get_all_projekt_betreuer():
         betreuer = Projekt_Betreuer.query.all()
         return betreuer
+
+    class Student(db.Model):
+        __tablename__ = 'student'
+
+        stud_id = db.Column(db.Integer, primary_key=True)
+        nachname = db.Column(db.String(20))
+        vorname = db.Column(db.String(20))
+        nds = db.Column(db.String(10))
+        email = db.Column(db.String(20))
+        matrikel = db.Column(db.Integer)
+        studiengang = db.Column(db.Integer)
+        gruppe_status = db.Column(db.Integer)
+        trm_number = db.Column(db.Integer)
+        Gruppe_gruppe_id = db.Column(db.Integer, db.ForeignKey('gruppe.gruppe_id'))
+
+        gruppe = db.relationship('Gruppe', backref=db.backref('studenten', lazy=True))
+        student_art = db.relationship('Student_Art', backref='student', lazy=True)
+
+        def __init__(self, nachname, vorname, nds, email, matrikel, studiengang, gruppe_status, trm_number,
+                     Gruppe_gruppe_id):
+            self.nachname = nachname
+            self.vorname = vorname
+            self.nds = nds
+            self.email = email
+            self.matrikel = matrikel
+            self.studiengang = studiengang
+            self.gruppe_status = gruppe_status
+            self.trm_number = trm_number
+            self.Gruppe_gruppe_id = Gruppe_gruppe_id
+
+    class Student_Art(db.Model):
+        __tablename__ = 'student_art'
+
+        stud_art_id = db.Column(db.Integer, primary_key=True)
+        Art_art_id = db.Column(db.Integer, db.ForeignKey('art.art_id'))
+        Student_stud_id = db.Column(db.Integer, db.ForeignKey('student.stud_id'))
+
+        art = db.relationship('Art', backref=db.backref('student_arts', lazy=True))
+
+        def __init__(self, Art_art_id, Student_stud_id):
+            self.Art_art_id = Art_art_id
+            self.Student_stud_id = Student_stud_id
