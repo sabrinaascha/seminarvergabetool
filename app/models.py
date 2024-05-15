@@ -7,7 +7,7 @@ db = SQLAlchemy()
 # Tables
 class Art(db.Model):
     art_id = db.Column(db.Integer, primary_key=True)
-    art_typ = db.Column(db.String(50))
+    art_typ = db.Column(db.String(30))
 
 
 class Projekt(db.Model):
@@ -71,9 +71,9 @@ class Mitarbeiter(db.Model):
 
     ma_id = db.Column(db.Integer, primary_key=True)
     vorname = db.Column(db.String(20))
-    nachname = db.Column(db.String(20))
+    nachname = db.Column(db.String(30))
     nds = db.Column(db.String(10))
-    email = db.Column(db.String(30))
+    email = db.Column(db.String(50))
     rolle = db.Column(db.Integer)
     Lehrstuhl_lehrstuhl_id = db.Column(db.Integer, db.ForeignKey('lehrstuhl.lehrstuhl_id'), nullable=False)
     lehrstuhl = db.relationship('Lehrstuhl', backref=db.backref('mitarbeiter', lazy=True))
@@ -122,21 +122,22 @@ class Student(db.Model):
     __tablename__ = 'student'
 
     stud_id = db.Column(db.Integer, primary_key=True)
-    nachname = db.Column(db.String(20))
+    nachname = db.Column(db.String(30))
     vorname = db.Column(db.String(20))
     nds = db.Column(db.String(10))
-    email = db.Column(db.String(20))
+    email = db.Column(db.String(50))
     matrikel = db.Column(db.Integer)
-    studiengang = db.Column(db.Integer)
     gruppe_status = db.Column(db.Integer)
-    trm_number = db.Column(db.Integer)
+    term_number = db.Column(db.Integer)
     Gruppe_gruppe_id = db.Column(db.Integer, db.ForeignKey('gruppe.gruppe_id'))
+    Studiengang_studiengang_id = db.Column(db.Integer, db.ForeignKey('studiengang.studiengang_id'))
 
-    gruppe = db.relationship('Gruppe', backref=db.backref('studenten', lazy=True))
+    gruppe = db.relationship('Gruppe', backref=db.backref('student', lazy=True))
+    studiengang = db.relationship('Studiengang', backref=db.backref('student', lazy=True))
     student_art = db.relationship('Student_Art', backref='student', lazy=True)
 
     def __init__(self, nachname, vorname, nds, email, matrikel, studiengang, gruppe_status, trm_number,
-                 Gruppe_gruppe_id):
+                 Gruppe_gruppe_id, Studiengang_studiengang_id):
         self.nachname = nachname
         self.vorname = vorname
         self.nds = nds
@@ -144,8 +145,9 @@ class Student(db.Model):
         self.matrikel = matrikel
         self.studiengang = studiengang
         self.gruppe_status = gruppe_status
-        self.trm_number = trm_number
+        self.term_number = trm_number
         self.Gruppe_gruppe_id = Gruppe_gruppe_id
+        self.Studiengang_studiengang_id = Studiengang_studiengang_id
 
 class Student_Art(db.Model):
     __tablename__ = 'student_art'
