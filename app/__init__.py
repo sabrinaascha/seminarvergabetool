@@ -28,10 +28,14 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  # Um zusätzliche Warnunge
 
 #blueprints importieren + registrieren
 from app.views.index import bp_index
-from app.views.index import bp_info
+from app.views.info import bp_info
+from app.views.admin import bp_admin
+from app.views.auth import bp_auth
 
 app.register_blueprint(bp_index, url_prefix="")
 app.register_blueprint(bp_info, url_prefix="/info")
+app.register_blueprint(bp_admin, url_prefix="/admin")
+app.register_blueprint(bp_auth, url_prefix="/auth")
 
 
 

@@ -59,7 +59,7 @@ Liebe Studierende, untenstehend können sie zu den einzelnen Seminaren und Absch
 
 
 
-<!-- Random Displayed Text -->
+<!-- Random Displayed Text: z.B: Phase 1: Derzeit keine Aktivitäten notwendig, Phase 2: Priorisierungen vornehmen <> aktuelle Prios:  -->
 <div class="w3-container w3-white w3-center w3-padding-large">
     {%block lockerView %}{%endblock%}
 </div>
@@ -69,7 +69,25 @@ Liebe Studierende, untenstehend können sie zu den einzelnen Seminaren und Absch
 <div class="w3-container w3-center w3-padding-32">
     <h2>Aktuelle Hinweise</h2>
     <div class="w3-panel w3-card w3-center w3-padding-32">
-        <pre>{{aktuell}}</pre>
+        <div class="w3-container w3-center w3-padding-32">
+    <h2>Aktuelle Hinweise</h2>
+    <div class="w3-panel w3-card w3-center w3-padding-32">
+        <h3>1. Phase</h3>
+        <p>In der ersten Phase können Sie sich für die Teilnahme an der Vergabe registrieren.<br>
+        <strong>{{ daten.phase1_start }} bis {{ daten.phase1_end }}</strong></p>
+        <p>Themenvorstellung der Lehrstühle:<br>
+        22.01 bis 26.01.2024</p>
+
+        <h3>2. Phase</h3>
+        <p>In der zweiten Phase können Sie Themen auswählen. Nach der zweiten Phase erfolgt die Vergabe der Plätze in den einzelnen Themen.<br>
+        <strong>{{ daten.phase2_start }} bis {{ daten.phase2_end }}</strong></p>
+
+        <h3>3. Phase</h3>
+        <p>In der dritten Phase können Sie Ihr erhaltenes Thema einsehen, es ablehnen oder ein freies Thema wählen, sofern Ihnen beim Vergabeprozess kein Thema zugeteilt werden konnte.<br>
+        <strong>{{ daten.phase3_start }} bis {{ daten.phase3_end }}</strong></p>
+    </div>
+</div>
+
     </div>
 </div>
 
