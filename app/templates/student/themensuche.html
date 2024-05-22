@@ -1,0 +1,45 @@
+{% extends 'layout.html' %}
+
+{% block pageContent %}
+
+
+<!-- Header -->
+<div class="w3-container w3-center" style="padding-bottom: 32px;">
+    <h1><b>Themensuche</b></h1>
+</div>
+
+<div class="w3-container w3-margin-top">
+    <h1 class="w3-center">Projekte</h1>
+    <div class="w3-row">
+        {% for projekt in Projekte %}
+            <div class="w3-col l4 m6 s12 w3-margin-bottom">
+                <div class="w3-card-4 w3-white">
+                    <header class="w3-container w3-blue">
+                        <h2> {{ project.titel }} </h2>
+                    </header>
+                    <div class="w3-container">
+                        <p><strong>geeignet für:</strong> {{ fach }}</p>
+                        <p><strong>Plätze:</strong> {{ projekt.max_anzahl }} (vergeben: 0)</p>
+                        <p><strong>Betreuer:</strong> {{ ProjektBetreuer. }}</p>
+                        <p>{{ project.beschreibung }}</p>
+                        <p><strong>Aufgabenstellung:</strong> Konzeption und Implementierung eines gegebenen XAI-Ansatzes zur Visualisierung der Entscheidungen maschineller Lernverfahren. Analyse und Interpretation der Entscheidungen maschineller Lernverfahren (z.B. anhand von Konfidenz-Größen).</p>
+                        <p><strong>Empfohlen:</strong> Interesse und Spaß an AI / Programmierung und Visualisierung</p>
+                        <p><strong>Betreuung:</strong> Thomas Krapf, Paul Miethaner</p>
+                    </div>
+                    <footer class="w3-container w3-blue w3-center">
+                        <p>Weitere Informationen</p>
+                    </footer>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+<div class="w3-container w3-padding-16">
+    <a href="{{ url_for('bp_index.index')}}"
+        class="w3-button w3-wiwi-color w3-padding-large w3-large w3-margin-top w3-round">Startseite</a>
+</div>
+
+
+{% endblock %}
