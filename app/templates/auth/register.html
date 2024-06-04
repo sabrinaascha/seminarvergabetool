@@ -1,0 +1,77 @@
+{% extends 'layout/layout.html' %}
+
+{% block pageContent %}
+
+<h1>Registrierung</h1>
+    <!---<p> Hallo {{ current_user.vorname }} {{ current_user.name }},<br>
+    um am Vergabeprozess teilzunehmen, werden weitere Daten von Ihnen benötigt. Sie haben zudem die Möglichkeit auszuwählen, für welche Abschlussarbeiten/ Seminare Sie sich für die Teilnahme registrieren möchten.
+    </p> -->
+<form method="POST" action="{{ url_for('bp_auth.register') }}" class="w3-container w3-margin-top w3-center">
+
+    <div class="w3-row-padding w3-margin-bottom">
+        <div class="w3-col l3 w3-right-align">
+            <label for="matrikelnummer">Matrikelnummer</label>
+        </div>
+        <div class="w3-col l9 w3-left-align">
+            <input type="text" id="matrikelnummer" name="matrikelnummer" class="w3-input w3-border"/>
+        </div>
+    </div>
+    <div class="w3-row-padding w3-margin-bottom">
+        <div class="w3-col l3 w3-right-align">
+            <label for="studiengang">Studiengang</label>
+        </div>
+        <div class="w3-col l9 w3-left-align">
+            <select id="studiengang" name="studiengang" class="w3-select w3-border">
+                {% for sg in studiengaenge %}
+                <option value="{{ sg.bezeichnung }}" {% if selected_studiengang and selected_studiengang.id == sg.id %}selected{% endif %}>
+                    {{ sg.bezeichnung }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <div class="w3-row-padding w3-margin-bottom">
+        <div class="w3-col l3 w3-right-align">
+            <label for="bachelorarbeit">Registrierung für:</label>
+        </div>
+        <div class="w3-col l9 w3-left-align">
+            <div class="w3-row">
+                <div class="w3-col l12">
+                    <input type="checkbox" id="bachelorarbeit" name="bachelorarbeit" class="w3-check"/>
+                    <label for="bachelorarbeit" class="w3-margin-left">Bachelorarbeit</label>
+                </div>
+            </div>
+            <div class="w3-row">
+                <div class="w3-col l12">
+                    <input type="checkbox" id="projektseminar" name="projektseminar" class="w3-check"/>
+                    <label for="projektseminar" class="w3-margin-left">Projektseminar</label>
+                </div>
+            </div>
+            <div class="w3-row">
+                <div class="w3-col l12">
+                    <input type="checkbox" id="masterarbeit" name="masterarbeit" class="w3-check"/>
+                    <label for="masterarbeit" class="w3-margin-left">Masterarbeit</label>
+                </div>
+            </div>
+            <div class="w3-rowl">
+                <div class="w3-col l12">
+                    <input type="checkbox" id="theoretisches_seminar" name="theoretisches_seminar" class="w3-check"/>
+                    <label for="theoretisches_seminar" class="w3-margin-left">Theoretisches Seminar</label>
+                </div>
+            </div>
+            <div class="w3-row">
+                <div class="w3-col l12">
+                    <input type="checkbox" id="praktisches_seminar" name="praktisches_seminar" class="w3-check"/>
+                    <label for="praktisches_seminar" class="w3-margin-left">Praktisches Seminar</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="w3-row-padding w3-margin-bottom w3-center">
+        <input type="submit" value="Registrieren" class=" w3-button w3-fids-color w3-padding-large w3-large w3-margin-top w3-round"/>
+    </div>
+</form>
+
+{% endblock %}

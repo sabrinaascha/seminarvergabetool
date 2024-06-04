@@ -1,0 +1,77 @@
+{% extends 'layout/layout.html' %}
+
+{% block pageContent %}
+
+
+<!-- Header -->
+<div class="w3-container w3-center" >
+    <h1><b>Themen: {{ art_typ }}</b></h1>
+</div>
+
+
+
+<div class="w3-container w3-margin-top">
+    {% for lehrstuhl, projekte in lehrstuhl_dict.items() %}
+        <div class="w3-container">
+            <h3 class="w3-left-align w3-text-red">{{ lehrstuhl }}</h3>
+            {% for projekt in projekte %}
+                <div class="w3-card-4 w3-left-align w3-margin-bottom w3-white" onclick="toggleDescription(this)">
+                    <header class="w3-container w3-pale-red">
+                        <h5>{{ projekt.titel}} ({{ projekt.art.art_typ }})</h5>
+                    </header>
+                    <div class="w3-container">
+                        <p><strong>geeignet für:</strong> {{ projekt.fach.bezeichnung }}
+                            <strong>Betreuer:</strong>
+                                {% for betreuer in projekt.betreuer %}
+                                    {{ betreuer.vorname }} {{ betreuer.nachname }}
+                                    {% if not loop.last %} / {% endif %}
+                                {% endfor %}
+                        </p>
+                        <p class="description" style="display: none;">{{ projekt.beschreibung }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+</div>
+
+
+<div class="w3-container w3-padding-16">
+    <a href="{{ url_for('bp_index.index')}}"
+        class="w3-button w3-light-grey w3-margin-top w3-round">Startseite</a>
+    <button onclick="scrollToTop()" class = "w3-button w3-light-grey w3-round w3-margin-top w3-round" >Nach oben</button>
+</div>
+
+
+<script>
+
+
+    function scrollToTop() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function filterByArtTyp(artTyp) {
+        const url = new URL(window.location.href);
+        const params = new URLSearchParams(url.search);
+        if (artTyp) {
+            params.set('art_typ', artTyp);
+        } else {
+            params.delete('art_typ');
+        }
+        window.location.search = params.toString();
+    }
+
+    function toggleDescription(element) {
+        const description = element.querySelector('.description');
+        if (description.style.display === 'none' || description.style.display === '') {
+            description.style.display = 'block';
+        } else {
+            description.style.display = 'none';
+        }
+    }
+
+
+</script>
+
+
+{% endblock %}

@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, date, timedelta
 
+
 db = SQLAlchemy()
 
 class Gruppe(db.Model):
@@ -15,6 +16,10 @@ class Studiengang(db.Model):
     bezeichnung = db.Column(db.String(50))
     abschluss = db.Column(db.String(10))
 
+    @classmethod
+    def get_all_studiengaenge(cls):
+        return Studiengang.query.all()
+
 class Fach(db.Model):
     __tablename__ = 'fach'
     fach_id = db.Column(db.Integer, primary_key=True)
@@ -24,6 +29,10 @@ class Art(db.Model):
     __tablename__ = 'art'
     art_id = db.Column(db.Integer, primary_key=True)
     art_typ = db.Column(db.String(30))
+
+    @staticmethod
+    def get_art_typen():
+        return Art.query.distinct(Art.art_typ).all()
 
 class Lehrstuhl(db.Model):
     __tablename__ = 'lehrstuhl'
@@ -37,7 +46,7 @@ class Rolle(db.Model):
     bezeichnung = db.Column(db.String(20))
 
 class Student(db.Model):
-    __tablename__ = 'student'
+    __tablename__ = 'profil'
     stud_id = db.Column(db.Integer, primary_key=True)
     nachname = db.Column(db.String(30))
     vorname = db.Column(db.String(20))
@@ -50,6 +59,38 @@ class Student(db.Model):
 
     gruppe = db.relationship('Gruppe', backref=db.backref('students', lazy=True))
     studiengang = db.relationship('Studiengang', backref=db.backref('students', lazy=True))
+
+    @classmethod
+    def is_student(nds=""):
+        return  Student.query.filter_by(nds=nds).first() is not None
+
+
+    @classmethod
+    def get_all_Students():
+        return Student.query.all()
+
+    def get_student(nds=""):
+        if nds != "":
+            student = Student.query.filter_by(nds=nds).first()
+        return student
+
+    def get_all_nds():
+        query = Student.query.filter(Student.nds != "0").all()
+        all_nds = []
+        for entry in query:
+            all_nds.append(entry.nds)
+        return all_nds
+
+
+class StudentArt(db.Model):
+    _tablename_ = 'student_art'
+    stud_art_id = db.Column(db.Integer, primary_key=True)
+    art_art_id = db.Column(db.Integer, db.ForeignKey('art.art_id'))
+    student_stud_id = db.Column(db.Integer, db.ForeignKey('profil.stud_id'))
+
+    art = db.relationship('Art', backref=db.backref('student_art', lazy=True))
+    student = db.relationship('Student', backref=db.backref('student_art', lazy=True))
+
 
 class Mitarbeiter(db.Model):
     __tablename__ = 'mitarbeiter'
@@ -64,14 +105,28 @@ class Mitarbeiter(db.Model):
     rolle = db.relationship('Rolle', backref=db.backref('mitarbeiter', lazy=True))
     lehrstuhl = db.relationship('Lehrstuhl', backref=db.backref('mitarbeiter', lazy=True))
 
-class StudentArt(db.Model):
-    _tablename_ = 'student_art'
-    stud_art_id = db.Column(db.Integer, primary_key=True)
-    art_art_id = db.Column(db.Integer, db.ForeignKey('art.art_id'))
-    student_stud_id = db.Column(db.Integer, db.ForeignKey('student.stud_id'))
+    betreute_projekte = db.relationship('Projekt', secondary='projekt_betreuer', back_populates='betreuer')
 
-    art = db.relationship('Art', backref=db.backref('student_art', lazy=True))
-    student = db.relationship('Student', backref=db.backref('student_art', lazy=True))
+    @classmethod
+    def is_student(nds=""):
+        return  Student.query.filter_by(nds=nds).first() is not None
+    @staticmethod
+    def get_all_Mitarbeiter():
+        return Mitarbeiter.query.all()
+
+    def get_mitarbeiter(nds=""):
+        if nds != "":
+            mitarbeiter = Mitarbeiter.query.filter_by(nds=nds).first()
+        return mitarbeiter
+
+    def get_all_nds():
+        query = Mitarbeiter.query.filter(Mitarbeiter.nds != "0").all()
+        all_nds = []
+        for entry in query:
+            all_nds.append(entry.nds)
+        return all_nds
+
+
 
 class Projekt(db.Model):
     __tablename__ = 'projekt'
@@ -85,14 +140,14 @@ class Projekt(db.Model):
     art_art_id = db.Column(db.Integer, db.ForeignKey('art.art_id'), nullable=False)
     lehrstuhl_lehrstuhl_id = db.Column(db.Integer, db.ForeignKey('lehrstuhl.lehrstuhl_id'), nullable=False)
 
-    studiengang = db.relationship('Studiengang', backref=db.backref('projekte', lazy=True))
-    fach = db.relationship('Fach', backref=db.backref('projekte', lazy=True))
-    art = db.relationship('Art', backref=db.backref('projekte', lazy=True))
-    lehrstuhl = db.relationship('Lehrstuhl', backref=db.backref('projekte', lazy=True))
+    studiengang = db.relationship('Studiengang', backref=db.backref('projekt', lazy=True))
+    fach = db.relationship('Fach', backref=db.backref('projekt', lazy=True))
+    art = db.relationship('Art', backref=db.backref('projekt', lazy=True))
+    lehrstuhl = db.relationship('Lehrstuhl', backref=db.backref('projekt', lazy=True))
 
-    @staticmethod
-    def get_projekte_by_lehrstuhl(lehrstuhl_id):
-        return Projekt.query.filter_by(Lehrstuhl_lehrstuhl_id=lehrstuhl_id).all()
+    betreuer = db.relationship('Mitarbeiter', secondary='projekt_betreuer', back_populates='betreute_projekte')
+
+
 
 
 class ProjektBetreuer(db.Model):
@@ -101,18 +156,16 @@ class ProjektBetreuer(db.Model):
     mitarbeiter_ma_id = db.Column(db.Integer, db.ForeignKey('mitarbeiter.ma_id'), nullable=False)
     projekt_projekt_id = db.Column(db.Integer, db.ForeignKey('projekt.projekt_id'), nullable=False)
 
-    mitarbeiter = db.relationship('Mitarbeiter', backref=db.backref('projekt_betreuer', lazy=True))
-    projekt = db.relationship('Projekt', backref=db.backref('projekt_betreuer', lazy=True))
+    #mitarbeiter = db.relationship('Mitarbeiter', backref=db.backref('projekt_betreuer', lazy=True))
+    #projekt = db.relationship('Projekt', backref=db.backref('projekt_betreuer', lazy=True))
 
-    @staticmethod
-    def get_betreuer(projekt_projekt_id):
-        return ProjektBetreuer.query.filter_by(projekt_projekt_id).all()
+
 
 class Wahl(db.Model):
     __tablename__ = 'wahl'
     wahl_id = db.Column(db.Integer, primary_key=True)
     prio = db.Column(db.Integer)
-    student_stud_id = db.Column(db.Integer, db.ForeignKey('student.stud_id'), nullable=False)
+    student_stud_id = db.Column(db.Integer, db.ForeignKey('profil.stud_id'), nullable=False)
     projekt_projekt_id = db.Column(db.Integer, db.ForeignKey('projekt.projekt_id'), nullable=False)
 
     student = db.relationship('Student', backref=db.backref('wahl', lazy=True))
@@ -120,7 +173,7 @@ class Wahl(db.Model):
 
 class Phase(db.Model):
     __tablename__ = 'phase'
-    semester_id = db.Column(db.Integer, primary_key=True)
+    phase_id = db.Column(db.Integer, primary_key=True)
     semester = db.Column(db.String(20))
     start_p1 = db.Column(db.DateTime)
     ende_p1 = db.Column(db.DateTime)
@@ -128,3 +181,14 @@ class Phase(db.Model):
     ende_p2 = db.Column(db.DateTime)
     start_p3 = db.Column(db.DateTime)
     ende_p3 = db.Column(db.DateTime)
+
+class Superusers(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nds = db.Column(db.String(8))
+
+    def get_all_superusers():
+        query = Superusers.query.filter().all()
+        all_users = []
+        for entry in query:
+            all_users.append(entry.nds)
+        return all_users

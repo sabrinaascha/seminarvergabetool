@@ -45,7 +45,7 @@
       <a class="w3-bar-item w3-button w3-padding-large w3-hide-medium w3-hide-large w3-right" href="javascript:void(0)"
         onclick="openNavbar()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
       <a href="{{ url_for('bp_index.index')}}" class="w3-bar-item w3-button w3-padding-large">Home</a>
-      <a href="{{ url_for('bp_student.themensuche')}}" class="w3-bar-item w3-button w3-padding-large w3-hide-small">Themen Suche</a>
+      <a href="{{ url_for('bp_themen.themen')}}" class="w3-bar-item w3-button w3-padding-large w3-hide-small">Themen</a>
       <a href="{{ url_for('bp_index.index')}}" class="w3-bar-item w3-button w3-padding-large w3-hide-small">Regeln</a>
         <div class="w3-dropdown-hover w3-hide-small">
         <button class="w3-padding-large w3-button" title="Info">Info<i class="fa fa-caret-down"
@@ -104,6 +104,8 @@
         x.className = x.className.replace(" w3-show", "");
       }
     }
+
+
 
   </script>
 

@@ -8,5 +8,5 @@ bp_admin = Blueprint("bp_admin", __name__, url_prefix="/admin")
 #@superuser_required
 def admin():
     return render_template(
-        "admin/admin.html"
+        "admin/../templates/profil/admin.html"
         )
