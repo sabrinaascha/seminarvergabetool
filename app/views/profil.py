@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request
 from flask_login import current_user, login_required
 
-from app.models import Projekt, ProjektBetreuer, Art, Lehrstuhl, Mitarbeiter, Fach
+from app.models import Projekt, ProjektMitarbeiter, Art, Lehrstuhl, Mitarbeiter, Fach
 from app import app, db, helper
 
 bp_profil = Blueprint("bp_profile", __name__)

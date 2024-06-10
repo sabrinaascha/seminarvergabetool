@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request
 from flask_login import current_user
-from app.models import Projekt, ProjektBetreuer, Art, Lehrstuhl, Mitarbeiter, Fach, Student
+from app.models import Projekt, ProjektMitarbeiter, Art, Lehrstuhl, Mitarbeiter, Fach, Student
 from app import app, db, helper
 
 bp_themen = Blueprint("bp_themen", __name__)

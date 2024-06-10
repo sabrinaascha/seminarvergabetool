@@ -1,8 +1,9 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import LoginManager, UserMixin, current_user, login_user, logout_user, login_required
 import ldap
+from app import db
 import logging
-from app.models import Mitarbeiter, Student, Studiengang
+from app.models import Mitarbeiter, Student, Studiengang, StudentArt, Art
 
 bp_auth = Blueprint("bp_auth", __name__, url_prefix="/auth")
 
@@ -28,33 +29,52 @@ class User(UserMixin):
 #@login_required
 def register():
     studiengaenge = Studiengang.get_all_studiengaenge()
-    selected_studiengang = None
+
+
+    # Überprüfung, ob Student bereits registriert
+    student = Student.get_student(current_user.nds)
+
+    if student:
+        arten = StudentArt.get_selected_arten(student.stud_id)
+        return render_template('auth/already_registered.html',
+                               student=student,
+                               arten=arten)
 
     if request.method == 'POST':
-        vorname = request.form.get('vorname')
-        name = request.form.get('name')
-        nds_kennung = request.form.get('nds_kennung')
-        email = request.form.get('email')
         matrikelnummer = request.form.get('matrikelnummer')
         studiengang_id = request.form.get('studiengang')
-        studiengang = Studiengang.query.get(studiengang_id)
 
-        if studiengang.abschluss == 'Bachelor':
-            bachelorarbeit = request.form.get('bachelorarbeit') == 'on'
-            projektseminar = request.form.get('projektseminar') == 'on'
-        elif studiengang.abschluss == 'Master':
-            masterarbeit = request.form.get('masterarbeit') == 'on'
-            theoretisches_seminar = request.form.get('theoretisches_seminar') == 'on'
-            praktisches_seminar = request.form.get('praktisches_seminar') == 'on'
+        if not studiengang_id:
+            flash('Bitte wählen Sie einen Studiengang aus.')
+            return redirect(url_for('bp_auth.register'))
 
-        # Hier die Logik zum Speichern der Daten in der Datenbank hinzufügen
-        # Placeholder für DB-Operationen
+
+
+        #Student-Eintrag in Datenbank
+        student = Student(
+            vorname=current_user.vorname,
+            nachname=current_user.nachname,
+            nds=current_user.nds,
+            email=current_user.mail,
+            matrikelnummer=matrikelnummer,
+            studiengang_id=studiengang_id
+        )
+        db.session.add(student)
+        db.session.commit()
+
+        #Student_Art Einträge
+        arten_ids = request.form.getlist('arten')
+        for art_id in arten_ids:
+            art = Art.query.get(int(art_id))
+            if art:
+                student.arten.append(art)
+        db.session.commit()
+
         return redirect(url_for('bp_index.index'))
 
     return render_template('auth/register.html',
                            current_user=current_user,
-                           studiengaenge=studiengaenge,
-                           selected_studiengang=selected_studiengang)
+                           studiengaenge=studiengaenge)
 
 @loginManager.user_loader
 def load_user(nds):

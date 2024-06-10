@@ -1,0 +1,55 @@
+{% extends 'layout/layout.html' %}
+
+{% block pageContent %}
+
+<h1>Registrierung</h1>
+<p>Sie sind am Vergabeprozess mit folgenden Daten registriert:</p>
+
+<table class="w3-table w3-bordered">
+    <tr>
+        <th>Vorname</th>
+        <td>{{ student.vorname }}</td>
+    </tr>
+    <tr>
+        <th>Nachname</th>
+        <td>{{ student.nachname }}</td>
+    </tr>
+    <tr>
+        <th>NDS-Kennung</th>
+        <td>{{ student.nds }}</td>
+    </tr>
+    <tr>
+        <th>Email</th>
+        <td>{{ student.email }}</td>
+    </tr>
+    <tr>
+        <th>Matrikelnummer</th>
+        <td>{{ student.matrikel }}</td>
+    </tr>
+    <tr>
+        <th>Studiengang</th>
+        <td>{{ student.studiengang.bezeichnung}} ({{ student.studiengang.abschluss }})</td>
+    </tr>
+    <tr>
+        <th>Registriert für</th>
+        <td>{{ student.arten}}</td>
+    </tr>
+</table>
+
+<h4>Registriert für:</h4>
+
+<ul class="w3-ul">
+    {% for art in arten %}
+    <li><span class="w3-tag w3-green w3-margin-right">&#10003;</span>{{ art.art_typ }}</li>
+    {% endfor %}
+</ul>
+
+<p>Falls eine Änderung dieser Daten gewünscht ist, kontaktieren Sie bitte unseren Systemadministrator: <a href="mailto:Volker.Berg@wiwi.uni-regensburg.de">Berg, Volker</a></p>
+
+    <div class="w3-container w3-padding-16">
+        <a href="{{ url_for('bp_index.index')}}"
+            class="w3-button w3-light-grey w3-margin-top w3-round">Startseite</a>
+        <button onclick="scrollToTop()" class = "w3-button w3-light-grey w3-round w3-margin-top w3-round" >Nach oben</button>
+    </div>
+
+{% endblock %}
