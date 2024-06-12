@@ -1,3 +1,4 @@
+from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, date, timedelta
 
@@ -6,56 +7,64 @@ db = SQLAlchemy()
 
 class Gruppe(db.Model):
     __tablename__ = 'gruppe'
-    gruppe_id = db.Column(db.Integer, primary_key=True)
+    gruppe_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(20))
     status = db.Column(db.Boolean)
 
 
 class Studiengang(db.Model):
     __tablename__ = 'studiengang'
-    studiengang_id = db.Column(db.Integer, primary_key=True)
+    studiengang_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     bezeichnung = db.Column(db.String(50))
     abschluss = db.Column(db.String(10))
 
-    @classmethod
-    def get_all_studiengaenge(cls):
+    @staticmethod
+    def get_all_studiengaenge():
         return Studiengang.query.all()
 
 
 class Fach(db.Model):
     __tablename__ = 'fach'
-    fach_id = db.Column(db.Integer, primary_key=True)
+    fach_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     bezeichnung = db.Column(db.String(50))
 
+    @staticmethod
+    def get_all_faecher():
+        return Fach.query.all()
 
 class Art(db.Model):
     __tablename__ = 'art'
-    art_id = db.Column(db.Integer, primary_key=True)
+    art_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     art_typ = db.Column(db.String(30))
 
     students = db.relationship('Student', secondary='student_art', back_populates='arten')
+    projekte = db.relationship('Projekt', backref=db.backref('arten', lazy=True))
 
     @staticmethod
-    def get_art_typen():
+    def get_all_arten():
         return Art.query.distinct(Art.art_typ).all()
 
 
 class Lehrstuhl(db.Model):
     __tablename__ = 'lehrstuhl'
-    lehrstuhl_id = db.Column(db.Integer, primary_key=True)
+    lehrstuhl_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(40))
     homepage = db.Column(db.String(50))
 
+    lehrstuhl_mitarbeiter = db.relationship('Mitarbeiter', backref='lehrstuhl', lazy=True)
 
-class Rolle(db.Model):
-    __tablename__ = 'rolle'
-    rolle_id = db.Column(db.Integer, primary_key=True)
-    bezeichnung = db.Column(db.String(20))
+    @staticmethod
+    def get_all_lehrstuehle():
+        return Lehrstuhl.query.all()
+
+
+    def get_lehrstuhl_projekte(self):
+        return Projekt.query.filter_by(lehrstuhl_lehrstuhl_id=self.lehrstuhl_id).all()
 
 
 class Student(db.Model):
     __tablename__ = 'student'
-    stud_id = db.Column(db.Integer, primary_key=True)
+    stud_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nachname = db.Column(db.String(30))
     vorname = db.Column(db.String(20))
     nds = db.Column(db.String(10))
@@ -76,11 +85,27 @@ class Student(db.Model):
 
     @staticmethod
     def create_student(vorname, nachname, nds, email, matrikelnummer, studiengang_id):
-        student = Student(vorname=vorname, nachname=nachname, nds=nds, email=email, matrikel=matrikelnummer,
-                          studiengang_studiengang_id=studiengang_id)
+        student = Student(
+            vorname=vorname,
+            nachname=nachname,
+            nds=nds,
+            email=email,
+            matrikelnummer=matrikelnummer,
+            studiengang_studiengang_id=studiengang_id
+        )
         db.session.add(student)
         db.session.commit()
         return student
+
+    def add_arten(self, arten_ids):
+        for art_id in arten_ids:
+            art = Art.query.get(int(art_id))
+            if art:
+                self.arten.append(art)
+        db.session.commit()
+
+    def get_selected_arten(self):
+        return self.arten
 
     @staticmethod
     def get_all_Students():
@@ -101,7 +126,7 @@ class Student(db.Model):
 
 class StudentArt(db.Model):
     _tablename_ = 'student_art'
-    stud_art_id = db.Column(db.Integer, primary_key=True)
+    stud_art_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     art_art_id = db.Column(db.Integer, db.ForeignKey('art.art_id'))
     student_stud_id = db.Column(db.Integer, db.ForeignKey('student.stud_id'))
 
@@ -109,33 +134,41 @@ class StudentArt(db.Model):
     #student = db.relationship('Student', backref=db.backref('student_art', lazy=True))
 
 
-    @staticmethod
-    def get_selected_arten(stud_id):
-        return db.session.query(Art).join(StudentArt).filter(StudentArt.stud_art_id == stud_id).all()
+
 
 
 class Mitarbeiter(db.Model):
     __tablename__ = 'mitarbeiter'
-    ma_id = db.Column(db.Integer, primary_key=True)
+    ma_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     vorname = db.Column(db.String(20))
     nachname = db.Column(db.String(30))
     nds = db.Column(db.String(10))
     email = db.Column(db.String(50))
-    rolle_rolle_id = db.Column(db.Integer, db.ForeignKey('rolle.rolle_id'), nullable=False)
     lehrstuhl_lehrstuhl_id = db.Column(db.Integer, db.ForeignKey('lehrstuhl.lehrstuhl_id'), nullable=False)
-
-    rolle = db.relationship('Rolle', backref=db.backref('mitarbeiter', lazy=True))
-    lehrstuhl = db.relationship('Lehrstuhl', backref=db.backref('mitarbeiter', lazy=True))
 
     betreute_projekte = db.relationship('Projekt', secondary='projekt_mitarbeiter', back_populates='betreuer')
 
-    @classmethod
-    def mitarbeiter_exists(nds=""):
+    @staticmethod
+    def is_mitarbeiter(nds=""):
         return Mitarbeiter.query.filter_by(nds=nds).first() is not None
+
+    @staticmethod
+    def create_mitarbeiter(vorname, nachname, nds, email,lehrstuhl_id):
+        mitarbeiter = Mitarbeiter(
+            vorname=vorname,
+            nachname=nachname,
+            nds=nds,
+            email=email,
+            lehrstuhl_lehrstuhl_id=lehrstuhl_id
+        )
+        db.session.add(mitarbeiter)
+        db.session.commit()
+        return mitarbeiter
 
     @staticmethod
     def get_all_Mitarbeiter():
         return Mitarbeiter.query.all()
+
 
     def get_mitarbeiter(nds=""):
         if nds != "":
@@ -152,7 +185,7 @@ class Mitarbeiter(db.Model):
 
 class Projekt(db.Model):
     __tablename__ = 'projekt'
-    projekt_id = db.Column(db.Integer, primary_key=True)
+    projekt_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     titel = db.Column(db.String(100))
     beschreibung = db.Column(db.String(200))
     max_anzahl = db.Column(db.Integer)
@@ -169,6 +202,61 @@ class Projekt(db.Model):
 
     betreuer = db.relationship('Mitarbeiter', secondary='projekt_mitarbeiter', back_populates='betreute_projekte')
 
+    @staticmethod
+    def create_projekt(titel, beschreibung, max_anzahl, studiengang_id, fach_id, art_id, lehrstuhl_id):
+        projekt = Projekt(
+            titel = titel,
+            beschreibung=beschreibung,
+            max_anzahl=max_anzahl,
+            neu=True,
+            studiengang_studiengang_id=studiengang_id,
+            fach_fach_id=fach_id,
+            art_art_id=art_id,
+            lehrstuhl_lehrstuhl_id=lehrstuhl_id
+        )
+        db.session.add(projekt)
+        db.session.commit()
+        return projekt
+
+    def add_projekt_betreuer(self, mitarbeiter_id):
+        mitarbeiter = Mitarbeiter.query.filter_by(ma_id=mitarbeiter_id).first()
+        if mitarbeiter and mitarbeiter not in self.betreuer:
+            self.betreuer.append(mitarbeiter)
+            db.session.commit()
+
+    @staticmethod
+    def get_projects_by(search_query=None, art_filter=None):
+        projekte = Projekt.query
+        if search_query:
+            projekte = Projekt.apply_keyword_search(projekte, search_query)
+        if art_filter:
+            projekte = projekte.join(Projekt.art).filter(Art.art_typ == art_filter)
+        return projekte.all()
+
+    @staticmethod
+    def group_by_lehrstuhl(projekte):
+        lehrstuhl_dict = {}
+        for projekt in projekte:
+            lehrstuhl_name = projekt.lehrstuhl.name
+            if lehrstuhl_name not in lehrstuhl_dict:
+                lehrstuhl_dict[lehrstuhl_name] = []
+            lehrstuhl_dict[lehrstuhl_name].append(projekt)
+        return lehrstuhl_dict
+
+    @staticmethod
+    def apply_keyword_search(projekte, search_query):
+        if search_query:
+            search_filter = f"%{search_query}%"
+            projekte = projekte.filter(
+                (Projekt.titel.ilike(search_filter)) |
+                (Projekt.beschreibung.ilike(search_filter)) |
+                (Fach.bezeichnung.ilike(search_filter)) |
+                (Art.art_typ.ilike(search_filter)) |
+                (Projekt.betreuer.any(Mitarbeiter.vorname.ilike(search_query))) |
+                (Projekt.betreuer.any(Mitarbeiter.nachname.ilike(search_query)))
+            )
+        return projekte
+
 
 class ProjektMitarbeiter(db.Model):
     __tablename__ = 'projekt_mitarbeiter'
@@ -182,7 +270,7 @@ class ProjektMitarbeiter(db.Model):
 
 class Wahl(db.Model):
     __tablename__ = 'wahl'
-    wahl_id = db.Column(db.Integer, primary_key=True)
+    wahl_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     prio = db.Column(db.Integer)
     student_stud_id = db.Column(db.Integer, db.ForeignKey('student.stud_id'), nullable=False)
     projekt_projekt_id = db.Column(db.Integer, db.ForeignKey('projekt.projekt_id'), nullable=False)
@@ -190,10 +278,21 @@ class Wahl(db.Model):
     student = db.relationship('Student', backref=db.backref('wahl', lazy=True))
     projekt = db.relationship('Projekt', backref=db.backref('wahl', lazy=True))
 
+    @staticmethod
+    def save_priorities(student_id, priorities):
+        for project_id, priority in priorities:
+            wahl_entry = Wahl(
+                prio=priority,
+                student_stud_id=student_id,
+                projekt_projekt_id=project_id
+            )
+            db.session.add(wahl_entry)
+        db.session.commit()
+
 
 class Phase(db.Model):
     __tablename__ = 'phase'
-    phase_id = db.Column(db.Integer, primary_key=True)
+    phase_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     semester = db.Column(db.String(20))
     start_p1 = db.Column(db.DateTime)
     ende_p1 = db.Column(db.DateTime)
@@ -202,13 +301,31 @@ class Phase(db.Model):
     start_p3 = db.Column(db.DateTime)
     ende_p3 = db.Column(db.DateTime)
 
+class User(UserMixin):
+    def __init__(self, nds, vorname, nachname, mail):
+        self.nds = nds
+        self.vorname = vorname
+        self.nachname = nachname
+        self.mail = mail
+
+    def get_id(self):
+        return self.nds
+
+    @property
+    def is_student(self):
+        return Student.query.filter_by(nds=self.nds).first() is not None
+
+    @property
+    def is_mitarbeiter(self):
+        return Mitarbeiter.query.filter_by(nds=self.nds).first() is not None
+
 
 class Superuser(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nds = db.Column(db.String(8))
 
     def get_all_superusers():
-        query = Superuser.query.filter().all()
+        query = Superuser.query.all()
         all_users = []
         for entry in query:
             all_users.append(entry.nds)

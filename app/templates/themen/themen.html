@@ -4,29 +4,27 @@
 
 
 <!-- Header -->
-<div class="w3-container w3-center" >
+<div class="w3-container w3-center w3-padding-16" >
     <h1><b>Themen</b></h1>
 </div>
 
-    <form id="filterForm" class="w3-container w3-row" method="GET" action="{{ url_for('bp_themen.themen') }}">
+    <form id="filterForm" class="w3-container" method="GET" action="{{ url_for('bp_themen.themen') }}">
+
+        <div class="w3-margin-bottom w3-row w3-border w3-round">
+            <div class="w3-col s4 m2">
+                <button class="w3-button w3-block {% if not art_filter %}w3-fids-color{% else %}w3-light-grey{% endif %}" type="button" onclick="filterByArtTyp('')">Alle</button>
+            </div>
+            {% for art in arten %}
+            <div class="w3-col s4 m2">
+                <button class="w3-button w3-block {% if art.art_typ == art_filter %}w3-fids-color{% else %}w3-light-grey{% endif %}" type="button" onclick="filterByArtTyp('{{ art.art_typ }}')">{{ art.art_typ }}</button>
+            </div>
+            {% endfor %}
+        </div>
+
 
         <div class="w3-row w3-margin-bottom">
-
-            <div class="w3-col s12 w3-padding-bottom">
-                <div class="w3-row w3-border w3-round w3-margin-bottom">
-                    <div class="w3-col s4 m2">
-                        <button class="w3-button w3-block {% if not art_filter %}w3-fids-color{% else %}w3-light-grey{% endif %}" type="button" onclick="filterByArtTyp('')">Alle</button>
-                    </div>
-                    {% for art in arten %}
-                    <div class="w3-col s4 m2">
-                        <button class="w3-button w3-block {% if art.art_typ == art_filter %}w3-fids-color{% else %}w3-light-grey{% endif %}" type="button" onclick="filterByArtTyp('{{ art.art_typ }}')">{{ art.art_typ }}</button>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-
             <div class="w3-col s9 m9">
-                <input class="w3-input w3-round" type="text" name="search" placeholder="Alle durchsuchen..." value="{{ search_query }}">
+                <input class="w3-input w3-round w3-border-black" type="text" name="search" placeholder="Alle durchsuchen..." value="{{ search_query }}">
             </div>
             <div class="w3-col s3 m3">
                 <button class="w3-button w3-fids-color w3-round w3-margin-left w3-block" type="submit">Suchen</button>
@@ -39,14 +37,33 @@
 <div class="w3-container w3-margin-top">
     {% for lehrstuhl, projekte in lehrstuhl_dict.items() %}
         <div class="w3-container">
+
             <h3 class="w3-left-align w3-text-red">{{ lehrstuhl }}</h3>
             {% for projekt in projekte %}
-                <div class="w3-card-4 w3-left-align w3-margin-bottom w3-white" onclick="toggleDescription(this)">
-                    <header class="w3-container w3-pale-red">
-                        <h5>{{ projekt.titel}} ({{ projekt.art.art_typ }})</h5>
+                <div class="w3-card-4 w3-left-align w3-margin-bottom w3-white" onclick="showDescription(this)">
+
+                    <header class="w3-container w3-pale-red w3-row w3-padding-small">
+                    <div class="w3-col s2 m1 w3-center w3-padding-small">
+                         {% if projekt.art.art_typ == 'Bachelorarbeit' %}
+                            <div class="circle-tag w3-blue">B</div>
+                        {% elif projekt.art.art_typ == 'Masterarbeit' %}
+                            <div class="circle-tag w3-green">M</div>
+                        {% elif projekt.art.art_typ == 'Projektseminar' %}
+                            <div class="circle-tag w3-orange">P</div>
+                        {% elif projekt.art.art_typ == 'Praxisseminar' %}
+                            <div class="circle-tag w3-red">P</div>
+                        {% elif projekt.art.art_typ == 'Theoretisches Seminar' %}
+                            <div class="circle-tag w3-purple">T</div>
+                        {% endif %}
+                    </div>
+
+                     <div class="w3-col s10 m11 w3-display-container">
+                        <h5>{{ projekt.titel }} ({{ projekt.art.art_typ }})</h5>
+                    </div>
                     </header>
+
                     <div class="w3-container">
-                        <p><strong>geeignet für:</strong> {{ projekt.fach.bezeichnung }}
+                        <p><strong>geeignet für:</strong> {{ projekt.fach.bezeichnung }},
                             <strong>Betreuer:</strong>
                                 {% for betreuer in projekt.betreuer %}
                                     {{ betreuer.vorname }} {{ betreuer.nachname }}
@@ -55,18 +72,20 @@
                         </p>
                         <p class="description" style="display: none;">{{ projekt.beschreibung }}</p>
                     </div>
-                </div>
+                 </div>
             {% endfor %}
+
         </div>
     {% endfor %}
 </div>
 
 
-<div class="w3-container w3-padding-16">
+<div class="w3-container w3-small">
     <a href="{{ url_for('bp_index.index')}}"
-        class="w3-button w3-light-grey w3-margin-top w3-round">Startseite</a>
-    <button onclick="scrollToTop()" class = "w3-button w3-light-grey w3-round w3-margin-top w3-round" >Nach oben</button>
+        class="w3-button w3-fids-color w3-padding-large w3-large w3-margin-top w3-round">Startseite</a>
+    <a onclick="scrollToTop()" class = "w3-button w3-fids-color w3-padding-large w3-large w3-margin-top w3-round" >Nach oben</a>
 </div>
+
 
 
 <script>
@@ -87,7 +106,7 @@
         window.location.search = params.toString();
     }
 
-    function toggleDescription(element) {
+    function showDescription(element) {
         const description = element.querySelector('.description');
         if (description.style.display === 'none' || description.style.display === '') {
             description.style.display = 'block';

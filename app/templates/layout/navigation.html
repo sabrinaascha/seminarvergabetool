@@ -9,7 +9,8 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <style>
+
+<style>
     body,
     h1,
     h2,
@@ -58,7 +59,19 @@
         </div>
       </div>
 
-      <a href="{{ url_for('bp_index.index')}}" class="w3-padding-large w3-button w3-right">Profil</a>
+
+      <a href="
+        {% if current_user.is_authenticated %}
+            {% if current_user.is_mitarbeiter %}
+                {{ url_for('bp_mitarbeiter.profil') }}
+            {% elif current_user.is_student %}
+                {{ url_for('bp_student.profil') }}
+            {% endif %}
+        {% else %}
+            {{ url_for('bp_index.index') }}
+        {% endif %}
+        " class="w3-padding-large w3-button w3-right">Profil</a>
+
       <!-- <a hidden href="{{ url_for('bp_index.index')}}" class="w3-padding-large w3-button w3-right" id="adminButtonDesktop">Admin</a> -->
     </div>
   </div>

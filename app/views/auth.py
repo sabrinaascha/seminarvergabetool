@@ -3,7 +3,7 @@ from flask_login import LoginManager, UserMixin, current_user, login_user, logou
 import ldap
 from app import db
 import logging
-from app.models import Mitarbeiter, Student, Studiengang, StudentArt, Art
+from app.models import Mitarbeiter, Student, Studiengang, StudentArt, Art, User
 
 bp_auth = Blueprint("bp_auth", __name__, url_prefix="/auth")
 
@@ -14,19 +14,10 @@ loginManager.login_view = "bp_auth.login"
 #logging.basicConfig(level=logging.DEBUG)
 
 
-class User(UserMixin):
-    def __init__(self, nds, vorname, nachname, mail):
-        self.nds = nds
-        self.vorname = vorname
-        self.nachname = nachname
-        self.mail = mail
-
-    def get_id(self):
-        return self.nds
 
 
 @bp_auth.route('/register', methods=['GET', 'POST'])
-#@login_required
+@login_required
 def register():
     studiengaenge = Studiengang.get_all_studiengaenge()
 
@@ -35,7 +26,7 @@ def register():
     student = Student.get_student(current_user.nds)
 
     if student:
-        arten = StudentArt.get_selected_arten(student.stud_id)
+        arten = student.get_selected_arten()
         return render_template('auth/already_registered.html',
                                student=student,
                                arten=arten)
@@ -48,10 +39,7 @@ def register():
             flash('Bitte wählen Sie einen Studiengang aus.')
             return redirect(url_for('bp_auth.register'))
 
-
-
-        #Student-Eintrag in Datenbank
-        student = Student(
+        student = Student.create_student(
             vorname=current_user.vorname,
             nachname=current_user.nachname,
             nds=current_user.nds,
@@ -59,18 +47,14 @@ def register():
             matrikelnummer=matrikelnummer,
             studiengang_id=studiengang_id
         )
-        db.session.add(student)
-        db.session.commit()
 
-        #Student_Art Einträge
         arten_ids = request.form.getlist('arten')
-        for art_id in arten_ids:
-            art = Art.query.get(int(art_id))
-            if art:
-                student.arten.append(art)
-        db.session.commit()
+        student.add_arten(arten_ids)
 
-        return redirect(url_for('bp_index.index'))
+        arten = student.get_selected_arten()
+        return render_template('auth/already_registered.html',
+                               student=student,
+                               arten=arten)
 
     return render_template('auth/register.html',
                            current_user=current_user,

@@ -37,14 +37,16 @@ from app.views.info import bp_info
 from app.views.admin import bp_admin
 from app.views.auth import bp_auth
 from app.views.themen import bp_themen
-from app.views.profil import bp_profil
+from app.views.mitarbeiter import bp_mitarbeiter
+from app.views.student import bp_student
 
 app.register_blueprint(bp_index, url_prefix="")
 app.register_blueprint(bp_info, url_prefix="/info")
 app.register_blueprint(bp_admin, url_prefix="/admin")
 app.register_blueprint(bp_auth, url_prefix="/auth")
 app.register_blueprint(bp_themen, url_prefix="/themen")
-app.register_blueprint(bp_profil, url_prefix="/profil")
+app.register_blueprint(bp_mitarbeiter, url_prefix="/mitarbeiter")
+app.register_blueprint(bp_student, url_prefix="/student")
 
 
 

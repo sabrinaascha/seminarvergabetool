@@ -3,31 +3,27 @@
 {% block pageContent %}
 
 
-<div class="w3-container w3-center" >
+<div class="w3-container w3-center w3-padding-32" >
     <h1><b>Willkommen auf der Startseite der Vergabetools.</b></h1>
 </div>
 
 
-<div class="w3-container w3-white w3-center w3-padding-large">
-
-    <p>Liebe Studierende, über den Reiter "Themen" können sie zu den einzelnen Seminaren und Abschlussarbeiten die aktuell angebotenen Themen der Lehrstühle einsehen und nach ihren Bedürfnissen zu filtern. </p>
-
+<div class="w3-container w3-white w3-center">
+    <p>Liebe Studierende, über den Reiter <b>"Themen"</b> können sie zu den einzelnen
+    Seminaren und Abschlussarbeiten die aktuell angebotenen Themen der Lehrstühle einsehen
+        und nach ihren Bedürfnissen zu filtern. In dem Reiter <b>"Regeln"</b> können Sie alle relevanten
+    Informationen zum Vergabeprozess und dessen Zeitablauf nachlesen. In Ihrem <b>"Profil"</b>
+    haben Sie zudem die Möglichkeit, sich für die Vergabe zu registrieren als auch die Priorisierung der Themen vorzunehmen.</p>
 
     {% if current_user.is_authenticated %}
         <p>Sie sind mit folgendem Nutzer angemeldet: {{ current_user.nds }}</p>
         <a href="{{ url_for('bp_auth.logout')}}"
                 class="w3-button w3-fids-color w3-padding-large w3-large w3-margin-top w3-round">Logout</a>
-        <a href="{{ url_for('bp_auth.register')}}"
-                class="w3-button w3-fids-color w3-padding-large w3-large w3-margin-top w3-round">Registrieren</a>
+
     {% else %}
-        <p>Sie sind aktuell nicht angemeldet. </p>
+        <p>Sie sind aktuell nicht angemeldet. Bitte melden Sie sich an, um das System vollumfänglich nutzen zu können.</p>
         <a href="{{ url_for('bp_auth.login')}}"
                 class="w3-button w3-fids-color w3-padding-large w3-large w3-margin-top w3-round">Login</a>
-
-
-        <!-- nur zum Testen -->
-        <a href="{{ url_for('bp_auth.register')}}"
-                class="w3-button w3-fids-color w3-padding-large w3-large w3-margin-top w3-round">Registrieren</a>
 
     {% endif %}
 
@@ -36,40 +32,40 @@
 
 <!-- Themen nach Art -->
 <div class="w3-container w3-margin-top w3-center">
-    <h2>Aktuelle Themen</h2>
+    <h2>Vergabeprozess</h2>
     <div class="w3-row-padding">
         <div class ="w3-col l1 w3-margin-bottom"><!-- da sonst 2 Spalten rechts falls großer Bildschirm -->
             <p></p>
         </div>
-        <div class="w3-col l2 m4 s6 w3-margin-bottom">
+        <div class="w3-col l2 m4 s6 w3-margin-bottom w3-center">
             <a href="{{ url_for('bp_themen.themen_by_art', art_typ='Bachelorarbeit') }}">
-                <img src="static/images/quadratic/bachelorarbeit.png" alt="Bachelorarbeit" class="w3-image w3-circle w3-hover-opacity" style="margin: 20px;">
+                <img src="static/images/quadratic/bachelorarbeit.png" alt="Bachelorarbeit" class="w3-image w3-circle w3-hover-opacity" >
             </a>
-            <p class="w3-center w3-centered">Bachelorarbeit</p>
+            <p>Bachelorarbeit</p>
         </div>
-        <div class="w3-col l2 m4 s6 w3-margin-bottom">
+        <div class="w3-col l2 m4 s6 w3-margin-bottom w3-center">
             <a href="{{ url_for('bp_themen.themen_by_art', art_typ='Projektseminar') }}">
-                <img src="static/images/quadratic/projektseminar.png" alt="Projektseminar" class="w3-image w3-circle w3-hover-opacity" style="margin: 20px;">
+                <img src="static/images/quadratic/projektseminar.png" alt="Projektseminar" class="w3-image w3-circle w3-hover-opacity" >
             </a>
-            <p class="w3-center">Projektseminar</p>
+            <p>Projektseminar</p>
         </div>
-        <div class="w3-col l2 m4 s6 w3-margin-bottom">
+        <div class="w3-col l2 m4 s6 w3-margin-bottom w3-center">
             <a href="{{ url_for('bp_themen.themen_by_art', art_typ='Masterarbeit') }}">
-                <img src="static/images/quadratic/masterarbeit.png" alt="Masterarbeit" class="w3-image w3-circle w3-hover-opacity" style="margin: 20px;">
+                <img src="static/images/quadratic/masterarbeit.png" alt="Masterarbeit" class="w3-image w3-circle w3-hover-opacity">
             </a>
-            <p class="w3-center">Masterarbeit</p>
+            <p>Masterarbeit</p>
         </div>
-        <div class="w3-col l2 m4 s6 w3-margin-bottom">
+        <div class="w3-col l2 m4 s6 w3-margin-bottom w3-center">
             <a href="{{ url_for('bp_themen.themen_by_art', art_typ='Praxisseminar') }}">
-                <img src="static/images/quadratic/praxisseminar.png" alt="Praxisseminar" class="w3-image w3-circle w3-hover-opacity" style="margin: 20px;">
+                <img src="static/images/quadratic/praxisseminar.png" alt="Praxisseminar" class="w3-image w3-circle w3-hover-opacity">
             </a>
-            <p class="w3-center">Praxisseminar</p>
+            <p>Praxisseminar</p>
         </div>
-        <div class="w3-col l2 m4 s6 w3-margin-bottom">
+        <div class="w3-col l2 m4 s6 w3-margin-bottom w3-center">
             <a href="{{ url_for('bp_themen.themen_by_art', art_typ='Theoretisches Seminar') }}">
-                <img src="static/images/quadratic/theoretischesseminar.png" alt="Theoretisches Seminar" class="w3-image w3-circle w3-hover-opacity" style="margin: 20px;">
+                <img src="static/images/quadratic/theoretischesseminar.png" alt="Theoretisches Seminar" class="w3-image w3-circle w3-hover-opacity">
             </a>
-            <p class="w3-center">Theoretisches Seminar</p>
+            <p>Theoretisches Seminar</p>
         </div>
     </div>
 </div>

@@ -4,7 +4,7 @@
 
 
 <!-- Header -->
-<div class="w3-container w3-center" >
+<div class="w3-container w3-center w3-padding-16" >
     <h1><b>Themen: {{ art_typ }}</b></h1>
 </div>
 
@@ -17,7 +17,7 @@
             {% for projekt in projekte %}
                 <div class="w3-card-4 w3-left-align w3-margin-bottom w3-white" onclick="toggleDescription(this)">
                     <header class="w3-container w3-pale-red">
-                        <h5>{{ projekt.titel}} ({{ projekt.art.art_typ }})</h5>
+                        <h5>{{ projekt.titel}} </h5>
                     </header>
                     <div class="w3-container">
                         <p><strong>geeignet für:</strong> {{ projekt.fach.bezeichnung }}
@@ -38,8 +38,8 @@
 
 <div class="w3-container w3-padding-16">
     <a href="{{ url_for('bp_index.index')}}"
-        class="w3-button w3-light-grey w3-margin-top w3-round">Startseite</a>
-    <button onclick="scrollToTop()" class = "w3-button w3-light-grey w3-round w3-margin-top w3-round" >Nach oben</button>
+        class="w3-button w3-fids-color w3-large w3-margin-top w3-round">Startseite</a>
+    <button onclick="scrollToTop()" class = "w3-button w3-fids-color w3-large w3-margin-top w3-round" >Nach oben</button>
 </div>
 
 

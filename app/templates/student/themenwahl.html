@@ -1,0 +1,79 @@
+{% extends 'layout/layout.html' %}
+
+{% block pageContent %}
+
+
+<div class="w3-container">
+    <h1><b>Themenwahl</b></h1>
+    <h5>für {{ selected_art }}</h5>
+
+    <div class="w3-bar w3-margin-bottom w3-round">
+        {% for art in arten %}
+            <button class="w3-bar-item w3-button {% if art.art_typ == selected_art %}w3-fids-color{% else %}w3-light-grey{% endif %}" onclick="location.href='{{ url_for('bp_student.themenwahl', art_typ=art.art_typ) }}'">{{ art.art_typ }}</button>
+        {% endfor %}
+    </div>
+
+
+
+<div class="w3-row-padding">
+        <div class="w3-half">
+            <h3>Verfügbare Projekte</h3>
+            {% for projekt in projekte %}
+                <div class="w3-card-4 w3-round w3-margin-bottom w3-light-grey w3-padding-small" draggable="true" ondragstart="drag(event)">
+                    <p><b>{{ projekt.titel }} </b> <br> {{ projekt.lehrstuhl.name }}</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="w3-half">
+            <form method="POST">
+                <h3>Prioritäten</h3>
+                <div class="w3-section">
+                    <label for="prio1">Priorität 1:</label>
+                    <select class="w3-select w3-border" name="prio1" id="prio1">
+                        <option value="" disabled selected>Wählen Sie ein Projekt</option>
+                        {% for projekt in projekte %}
+                            <option value="{{ projekt.id }}">{{ projekt.titel }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="w3-section">
+                    <label for="prio2">Priorität 2:</label>
+                    <select class="w3-select w3-border" name="prio2" id="prio2">
+                        <option value="" disabled selected>Wählen Sie ein Projekt</option>
+                        {% for projekt in projekte %}
+                            <option value="{{ projekt.id }}">{{ projekt.titel }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="w3-section">
+                    <label for="prio3">Priorität 3:</label>
+                    <select class="w3-select w3-border" name="prio3" id="prio3">
+                        <option value="" disabled selected>Wählen Sie ein Projekt</option>
+                        {% for projekt in projekte %}
+                            <option value="{{ projekt.id }}">{{ projekt.titel }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button class="w3-button w3-fids-color w3-round-large w3-margin-top" type="submit">Priorisierung speichern</button>
+            </form>
+        </div>
+</div>
+
+{% endblock %}
+
+<script>
+    function allowDrop(ev) {
+        ev.preventDefault();
+    }
+
+    function drag(ev) {
+        ev.dataTransfer.setData("text", ev.target.id);
+    }
+
+    function drop(ev) {
+        ev.preventDefault();
+        var data = ev.dataTransfer.getData("text");
+        ev.target.appendChild(document.getElementById(data));
+    }
+</script>>
