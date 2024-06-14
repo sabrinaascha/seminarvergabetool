@@ -36,30 +36,27 @@
 
 <div class="w3-container w3-margin-top">
     {% for lehrstuhl, projekte in lehrstuhl_dict.items() %}
-        <div class="w3-container">
+        <div class = "w3-container">
 
-            <h3 class="w3-left-align w3-text-red">{{ lehrstuhl }}</h3>
+            <h3 class="w3-left-align w3-text-black w3-display-container">
+                {{ lehrstuhl.name }}
+                <a href="{{ lehrstuhl.homepage }}" class="w3-display-right w3-hover-opacity"  title="Homepage">
+                    <i class="fa fa-info-circle"></i>
+                </a>
+            </h3>
+
             {% for projekt in projekte %}
                 <div class="w3-card-4 w3-left-align w3-margin-bottom w3-white" onclick="showDescription(this)">
 
-                    <header class="w3-container w3-pale-red w3-row w3-padding-small">
-                    <div class="w3-col s2 m1 w3-center w3-padding-small">
-                         {% if projekt.art.art_typ == 'Bachelorarbeit' %}
-                            <div class="circle-tag w3-blue">B</div>
-                        {% elif projekt.art.art_typ == 'Masterarbeit' %}
-                            <div class="circle-tag w3-green">M</div>
-                        {% elif projekt.art.art_typ == 'Projektseminar' %}
-                            <div class="circle-tag w3-orange">P</div>
-                        {% elif projekt.art.art_typ == 'Praxisseminar' %}
-                            <div class="circle-tag w3-red">P</div>
-                        {% elif projekt.art.art_typ == 'Theoretisches Seminar' %}
-                            <div class="circle-tag w3-purple">T</div>
-                        {% endif %}
-                    </div>
+                    <header class="w3-container w3-padding-small {{ projekt.art.get_color()}}">
+                        <div class="w3-col w3-padding-small l1 w3-center w3-hide-small w3-hide-medium">
+                            {% set circle_class, circle_text = projekt.art.get_circle_tag() %}
+                            <div class="circle-tag {{ circle_class }}">{{ circle_text }}</div>
+                        </div>
 
-                     <div class="w3-col s10 m11 w3-display-container">
-                        <h5>{{ projekt.titel }} ({{ projekt.art.art_typ }})</h5>
-                    </div>
+                        <div class="w3-col l11 w3-display-container">
+                            <h5>{{ projekt.titel }} ({{ projekt.art.art_typ }})</h5>
+                        </div>
                     </header>
 
                     <div class="w3-container">
@@ -67,7 +64,7 @@
                             <strong>Betreuer:</strong>
                                 {% for betreuer in projekt.betreuer %}
                                     {{ betreuer.vorname }} {{ betreuer.nachname }}
-                                    {% if not loop.last %} / {% endif %}
+                                    {% if not loop.last %} , {% endif %}
                                 {% endfor %}
                         </p>
                         <p class="description" style="display: none;">{{ projekt.beschreibung }}</p>
@@ -80,10 +77,10 @@
 </div>
 
 
-<div class="w3-container w3-small">
+<div class="w3-container w3-small w3-w3-padding-large">
     <a href="{{ url_for('bp_index.index')}}"
-        class="w3-button w3-fids-color w3-padding-large w3-large w3-margin-top w3-round">Startseite</a>
-    <a onclick="scrollToTop()" class = "w3-button w3-fids-color w3-padding-large w3-large w3-margin-top w3-round" >Nach oben</a>
+        class="w3-button w3-fids-color w3-large w3-margin-top w3-round">Startseite</a>
+    <a onclick="scrollToTop()" class = "w3-button w3-fids-color w3-large w3-margin-top w3-round" >Nach oben</a>
 </div>
 
 

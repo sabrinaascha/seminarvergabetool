@@ -36,16 +36,14 @@
     <tr>
         <th>Registriert für</th>
         <td>
-            <ul class="w3-ul">
                 {% for art in arten %}
-                <li><i class="w3-text-green w3-margin-left fa fa-check-square"></i>{{ art.art_typ }}</li>
+                <p><i class="w3-text-green w3-margin-left fa fa-check-square"></i>{{ art.art_typ }}</p>
                 {% endfor %}
-            </ul>
         </td>
     </tr>
 </table>
 
-<p>Falls eine Änderung dieser Daten gewünscht ist, kontaktieren Sie bitte unseren Systemadministrator: <a href="mailto:Volker.Berg@wiwi.uni-regensburg.de">Berg, Volker</a></p>
+<p>Falls eine Änderung dieser Daten gewünscht ist, kontaktieren Sie bitte unseren Systemadministrator: <a href="mailto:Volker.Berg@informatik.uni-regensburg.de">Berg, Volker</a></p>
 
     <div class="w3-container w3-padding-small">
         <a href="{{ url_for('bp_index.index')}}"

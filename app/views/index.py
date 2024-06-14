@@ -21,6 +21,10 @@ def index():
     return render_template("index.html",
                            phasen = phasen)
 
+@bp_index.route("/regeln")
+def regeln():
+    return render_template("regeln.html")
+
 
 
 

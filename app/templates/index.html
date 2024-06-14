@@ -9,30 +9,42 @@
 
 
 <div class="w3-container w3-white w3-center">
-    <p>Liebe Studierende, über den Reiter <b>"Themen"</b> können sie zu den einzelnen
-    Seminaren und Abschlussarbeiten die aktuell angebotenen Themen der Lehrstühle einsehen
-        und nach ihren Bedürfnissen zu filtern. In dem Reiter <b>"Regeln"</b> können Sie alle relevanten
-    Informationen zum Vergabeprozess und dessen Zeitablauf nachlesen. In Ihrem <b>"Profil"</b>
-    haben Sie zudem die Möglichkeit, sich für die Vergabe zu registrieren als auch die Priorisierung der Themen vorzunehmen.</p>
-
-    {% if current_user.is_authenticated %}
-        <p>Sie sind mit folgendem Nutzer angemeldet: {{ current_user.nds }}</p>
-        <a href="{{ url_for('bp_auth.logout')}}"
-                class="w3-button w3-fids-color w3-padding-large w3-large w3-margin-top w3-round">Logout</a>
-
-    {% else %}
-        <p>Sie sind aktuell nicht angemeldet. Bitte melden Sie sich an, um das System vollumfänglich nutzen zu können.</p>
+{% if current_user.is_authenticated %}
+    <p>Hallo {{ current_user.vorname }} {{ current_user.nachname }} ({{ current_user.nds }}),</p>
+{% else %}
+    <p>Liebe Studierende, <br>
+    <p>Sie sind aktuell nicht angemeldet. Bitte melden Sie sich an, um das System vollumfänglich nutzen zu können.</p>
         <a href="{{ url_for('bp_auth.login')}}"
                 class="w3-button w3-fids-color w3-padding-large w3-large w3-margin-top w3-round">Login</a>
 
-    {% endif %}
+{% endif %}
+    über den Reiter <b>"Themen"</b> können sie zu den einzelnen
+    Seminaren und Abschlussarbeiten die aktuell angebotenen Themen der Lehrstühle einsehen
+        und nach ihren Bedürfnissen zu filtern. In dem Reiter <b>"Regeln"</b> können Sie alle relevanten
+    Informationen zum Vergabeprozess und dessen Zeitablauf nachlesen. In Ihrem <b>"Profil"</b>
+    haben Sie zudem die Möglichkeit, ihre registrierten Daten abzurufen als auch die Priorisierung der Themen vorzunehmen.</p>
+
+    <p>Um am aktuellen Vergabeprozess für Abschlussarbeiten und Seminare teilzunehmen, melden Sie sich bitte mit ihrem NDS-Kennung an und klicken Sie auf <b>"Registrieren"</b>.</p>
+{% if current_user.is_authenticated %}
+
+     <a href="{{ url_for('bp_auth.logout')}}"
+                class="w3-button w3-fids-color w3-padding-large w3-large w3-margin-top w3-round">Logout</a>
+     <a href="{{ url_for('bp_auth.register')}}"
+                class="w3-button w3-fids-color w3-padding-large w3-large w3-margin-top w3-round">Registrieren</a>
+
+{% else %}
+        <a href="{{ url_for('bp_auth.login')}}"
+                class="w3-button w3-fids-color w3-padding-large w3-large w3-margin-top w3-round">Login</a>
+{% endif %}
+
+
+
 
 </div>
 
 
-<!-- Themen nach Art -->
 <div class="w3-container w3-margin-top w3-center">
-    <h2>Vergabeprozess</h2>
+    <h2>Aktuelle Themen der Lehrstühle</h2>
     <div class="w3-row-padding">
         <div class ="w3-col l1 w3-margin-bottom"><!-- da sonst 2 Spalten rechts falls großer Bildschirm -->
             <p></p>
@@ -68,16 +80,11 @@
             <p>Theoretisches Seminar</p>
         </div>
     </div>
-</div>
 
-
-
-
-
-
-<div class="w3-container w3-center w3-padding-32">
-    <h2>Hinweise zur Themenvergabe</h2>
-    <div class="w3-panel w3-card w3-center w3-padding-32">
+    <div class="w3-container w3-center w3-padding-32">
+        <h2>Hinweise zur Themenvergabe</h2>
+    </div>
+    <div class="w3-panel w3-card w3-center">
         <h3>1. Phase</h3>
         <p>In der ersten Phase können Sie sich für die Teilnahme an der Vergabe registrieren.<br>
         <strong>{{ phasen.phase1_start }} bis {{ phasen.phase1_end }}</strong></p>

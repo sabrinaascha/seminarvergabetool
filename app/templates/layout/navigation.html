@@ -47,7 +47,7 @@
         onclick="openNavbar()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
       <a href="{{ url_for('bp_index.index')}}" class="w3-bar-item w3-button w3-padding-large">Home</a>
       <a href="{{ url_for('bp_themen.themen')}}" class="w3-bar-item w3-button w3-padding-large w3-hide-small">Themen</a>
-      <a href="{{ url_for('bp_index.index')}}" class="w3-bar-item w3-button w3-padding-large w3-hide-small">Regeln</a>
+      <a href="{{ url_for('bp_index.regeln')}}" class="w3-bar-item w3-button w3-padding-large w3-hide-small">Regeln</a>
         <div class="w3-dropdown-hover w3-hide-small">
         <button class="w3-padding-large w3-button" title="Info">Info<i class="fa fa-caret-down"
             style="padding-left: 10px;"></i></button>
@@ -80,11 +80,11 @@
   <div id="navDemo" class="w3-bar-block w3-fids-color w3-hide w3-hide-large w3-hide-medium w3-top"
     style="margin-top:46px">
     <a href="{{ url_for('bp_index.index')}}" class="w3-bar-item w3-button w3-padding-large"
-      onclick="openNavbar()">Mieten</a>
-    <a href="{{ url_for('bp_index.index')}}" class="w3-bar-item w3-button w3-padding-large"
-      onclick="openNavbar()">Preise</a>
-    <a href="{{ url_for('bp_info.info')}}" class="w3-bar-item w3-button w3-padding-large"
-      onclick="openNavbar()">Info</a>
+      onclick="openNavbar()">Home</a>
+    <a href="{{ url_for('bp_themen.themen')}}" class="w3-bar-item w3-button w3-padding-large"
+      onclick="openNavbar()">Themen</a>
+    <a href="{{ url_for('bp_index.regeln')}}" class="w3-bar-item w3-button w3-padding-large"
+      onclick="openNavbar()">Regeln</a>
     <a id="adminButtonMobile"  href="{{ url_for('bp_admin.admin')}}" class="w3-bar-item w3-button w3-padding-large w3-black"
       onclick="openNavbar()" hidden>Admin</a>
   </div>

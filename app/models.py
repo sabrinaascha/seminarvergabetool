@@ -44,6 +44,29 @@ class Art(db.Model):
     def get_all_arten():
         return Art.query.distinct(Art.art_typ).all()
 
+    def get_color(self):
+        if self.art_typ == 'Bachelorarbeit':
+            return 'w3-pale-blue'
+        elif self.art_typ == 'Masterarbeit':
+            return 'w3-pale-green'
+        elif self.art_typ == 'Projektseminar':
+            return 'w3-pale-yellow'
+        elif self.art_typ == 'Praxisseminar':
+            return 'w3-pale-red'
+        elif self.art_typ == 'Theoretisches Seminar':
+            return 'w3-pale-purple'
+        return 'w3-light-grey'
+
+    def get_circle_tag(self):
+        tags = {
+            'Bachelorarbeit': ('w3-blue', 'B'),
+            'Masterarbeit': ('w3-green', 'M'),
+            'Projektseminar': ('w3-yellow', 'P'),
+            'Praxisseminar': ('w3-red', 'P'),
+            'Theoretisches Seminar': ('w3-purple', 'T'),
+        }
+        return tags.get(self.art_typ, ('', ''))
+
 
 class Lehrstuhl(db.Model):
     __tablename__ = 'lehrstuhl'
@@ -153,7 +176,7 @@ class Mitarbeiter(db.Model):
         return Mitarbeiter.query.filter_by(nds=nds).first() is not None
 
     @staticmethod
-    def create_mitarbeiter(vorname, nachname, nds, email,lehrstuhl_id):
+    def create_mitarbeiter(vorname, nachname, nds, email, lehrstuhl_id):
         mitarbeiter = Mitarbeiter(
             vorname=vorname,
             nachname=nachname,
@@ -170,11 +193,13 @@ class Mitarbeiter(db.Model):
         return Mitarbeiter.query.all()
 
 
+    @staticmethod
     def get_mitarbeiter(nds=""):
         if nds != "":
             mitarbeiter = Mitarbeiter.query.filter_by(nds=nds).first()
         return mitarbeiter
 
+    @staticmethod
     def get_all_nds():
         query = Mitarbeiter.query.filter(Mitarbeiter.nds != "0").all()
         all_nds = []
@@ -203,7 +228,7 @@ class Projekt(db.Model):
     betreuer = db.relationship('Mitarbeiter', secondary='projekt_mitarbeiter', back_populates='betreute_projekte')
 
     @staticmethod
-    def create_projekt(titel, beschreibung, max_anzahl, studiengang_id, fach_id, art_id, lehrstuhl_id):
+    def create_projekt(titel, beschreibung, max_anzahl, studiengang_id, fach_id, art_id, lehrstuhl_id, betreuer_ids):
         projekt = Projekt(
             titel = titel,
             beschreibung=beschreibung,
@@ -214,15 +239,42 @@ class Projekt(db.Model):
             art_art_id=art_id,
             lehrstuhl_lehrstuhl_id=lehrstuhl_id
         )
+        projekt.add_projekt_betreuer(betreuer_ids)
         db.session.add(projekt)
         db.session.commit()
         return projekt
 
-    def add_projekt_betreuer(self, mitarbeiter_id):
-        mitarbeiter = Mitarbeiter.query.filter_by(ma_id=mitarbeiter_id).first()
-        if mitarbeiter and mitarbeiter not in self.betreuer:
-            self.betreuer.append(mitarbeiter)
-            db.session.commit()
+    def add_projekt_betreuer(self, mitarbeiter_ids):
+        for ma_id in mitarbeiter_ids:
+            mitarbeiter = Mitarbeiter.query.get(int(ma_id))
+            if mitarbeiter:
+                self.betreuer.append(mitarbeiter)
+
+
+    def edit_projekt(self, titel, beschreibung, max_anzahl, studiengang_id, art_id, betreuer_ids):
+        edited = (
+            db.update(Projekt).
+            where(Projekt.projekt_id == self.projekt_id).
+            values(
+                titel=titel,
+                beschreibung=beschreibung,
+                max_anzahl=max_anzahl,
+                studiengang_studiengang_id=studiengang_id,
+                art_art_id=art_id
+            )
+        )
+        db.session.execute(edited)
+
+        self.betreuer.clear()
+        self.add_projekt_betreuer(betreuer_ids)
+        db.session.commit()
+
+    def delete_projekt(self):
+        db.session.delete(self)
+        db.session.commit()
+        return self
+
+
 
     @staticmethod
     def get_projects_by(search_query=None, art_filter=None):
@@ -237,10 +289,10 @@ class Projekt(db.Model):
     def group_by_lehrstuhl(projekte):
         lehrstuhl_dict = {}
         for projekt in projekte:
-            lehrstuhl_name = projekt.lehrstuhl.name
-            if lehrstuhl_name not in lehrstuhl_dict:
-                lehrstuhl_dict[lehrstuhl_name] = []
-            lehrstuhl_dict[lehrstuhl_name].append(projekt)
+            lehrstuhl = projekt.lehrstuhl
+            if lehrstuhl not in lehrstuhl_dict:
+                lehrstuhl_dict[lehrstuhl] = []
+            lehrstuhl_dict[lehrstuhl].append(projekt)
         return lehrstuhl_dict
 
     @staticmethod
@@ -249,7 +301,7 @@ class Projekt(db.Model):
             search_filter = f"%{search_query}%"
             projekte = projekte.filter(
                 (Projekt.titel.ilike(search_filter)) |
-                (Projekt.beschreibung.ilike(search_filter)) |
+                #(Projekt.beschreibung.ilike(search_filter)) |
                 (Fach.bezeichnung.ilike(search_filter)) |
                 (Art.art_typ.ilike(search_filter)) |
                 (Projekt.betreuer.any(Mitarbeiter.vorname.ilike(search_query))) |
@@ -324,6 +376,7 @@ class Superuser(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nds = db.Column(db.String(8))
 
+    @staticmethod
     def get_all_superusers():
         query = Superuser.query.all()
         all_users = []

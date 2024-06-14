@@ -1,0 +1,94 @@
+{% extends 'layout/layout.html' %}
+
+{% block pageContent %}
+    <div class = "">
+        <h1>Regeln</h1>
+    </div>
+
+    <div class ="w3-panel w3-card w3-left-align">
+        <h3>1. Registrierung</h3>
+        <p>In der <b>ersten Phase</b> können Sie sich für die Teilnahme am Projektseminar <b>registrieren</b>. Dazu füllen
+        Sie bitte das Registrierungs-Formular aus. Nach dem Senden bekommen Sie eine Bestätigungsmail zugeschickt. Die
+            Daten sind nachträglich für das aktuelle Semester <b>nicht mehr änderbar. </b>Nach
+            Abschluss dieser Phase ist keine weitere Nachmeldung mehr möglich.</p>
+    </div>
+    <div class ="w3-panel w3-card w3-left-align">
+        <h3>2. Eintragung für Themen</h3>
+        <p>Mit Beginn der <b>zweiten Phase</b> können Sie sich mit Ihren Zugangsdaten am System anmelden. Sie haben
+            u.a. die Möglichkeit, <b>Gruppen zu bilden</b> und Ihre bevorzugten <b>Themen zu wählen</b>.
+        <p>
+            Jedes Thema kann vom betreuenden Lehrstuhl hinsichtlich der Teilnahme eingeschränkt werden. Haben Sie die
+            vorausgesetzten Vorlesungen bereits besucht und haben das erforderliche Mindestsemester abgeschlossen,
+            können Sie sich für ein Projektthema bewerben.
+        <p>
+            Gruppen werden von einem Studenten "angelegt". Dieser Student gilt als Gruppenleiter. Andere Studenten haben
+            die Möglichkeit sich der Gruppe anzuschließen. Dieser Vorgang muss vom Gruppenleiter bestätigt werden.
+            Versäumt der Gruppenleiter innerhalb der zweiten Phase die Bestätigung für ein neues Gruppenmitglied,
+            entfällt für diesen Studenten die mögliche Gruppenmitgliedschaft. Nur der Gruppenleiter kann seine Gruppe
+            für ein Thema anmelden.
+        <p>
+            Alle von Ihnen gewählten Themen werden in eine Reihenfolge gebracht, die Ihren Präferenzen entspricht, d.h.
+            das erste Thema ist Ihnen am wichtigsten, alle weiteren Themen sind Ausweichvarianten. Sie müssen mindestens
+            ein Thema wählen, um an der Vergabe teilzunehmen. Maximal können Sie sich für drei Themen entscheiden. Durch
+            die Wahl mehrerer Themen haben Sie keinen Nachteil gegenüber den Studenten mit nur einer Wahl. Alle
+            Erstpräferenzen aller Studenten werden gleich gewichtet und haben gleiche Chancen.
+    </div>
+    <div class ="w3-panel w3-card w3-left-align">
+        <h3>3. Vergabe der Themen</h3>
+        <p>
+            <b>Nach der 2. Phase</b> erfolgt nun die <b>Themenvergabe</b>. Jetzt können Sie keine Änderungen mehr an
+            Ihren Wünschen vornehmen. Die Vergabe der Themen erfolgt nicht nach dem "first come, first serve" Prinzip,
+            sondern nach Ihren Präferenzen, Ihren Voraussetzungen und nach dem Zufall. Sind für ein bestimmtes Thema zu
+            viele Studenten angemeldet als Plätze vorhanden sind, so werden Studenten mit der höheren Präferenz
+            bevorzugt. Sind immer noch mehr Studenten als Plätze gelistet, startet der Zufallsgenerator. Jeder
+            Teilnehmer hat die gleiche Chance. Gruppenmitglieder zählen als eigene Person. Fällt die Wahl auf einen
+            einzelnen Studenten, bekommt er einen Platz und der Vorgang wird wiederholt, bis alle Plätze vergeben sind.
+            Falls ein Student aus einer Gruppe die Wahl gewinnt, so bekommen automatisch alle Gruppenmitglieder einen
+            Platz. Sie haben somit einen Vorteil gegenüber einzelnen Personen. Ist die Gruppe aber zu groß für die
+            restlichen Plätze, so werden Sie von der weiteren Wahl ausgeschlossen.
+        <p>
+            <b>Beispiel 1:</b>
+        <p>
+            Es sind zwei Plätze für Thema 1 zu vergeben. Für dieses Thema haben sich folgende Studenten mit Ihrer
+            Erstpräferenz beworben:<br>
+            Student 1<br>
+            Student 2 (Gruppe 1)<br>
+            Student 3 (Gruppe 1)<br>
+            Student 4<br>
+        <p>
+            Gewinnt Student 1 die Wahl, so wird er in das Thema eingetragen. Die Gruppe 1 ist mit zwei Teilnehmern zu
+            groß für die restlichen Plätze und kann daher nicht mehr an der Vergabe teilnehmen. Student 4 wird
+            eingetragen.
+            Gewinnt allerdings Student 2 oder Student 3 die Wahl, dann werden gleich beide Plätze an die Gruppe 1
+            vergeben.
+        <p>
+            <b>Beispiel 2:</b>
+        <p>
+            Es sind zwei Plätze für Thema 1 zu vergeben. Für das Thema haben sich folgende Studenten mit ihrer
+            Erstpräferenz beworben:<br>
+            Student 1 <br>
+            Student 2 (Gruppe 1)<br>
+            Student 3 (Gruppe 1)<br>
+            Mit seiner Zweitpräferenz hat sich beworben:<br>
+            Student 4<br>
+        <p>
+            An der ersten Runde, bei der der Zufall entscheiden wird, nehmen die Studenten 1, 2 und 3 teil. Alle haben
+            die gleiche Chance, einen Platz im Thema zu erhalten. Gewinnt Student 1 die Wahl, so wird er in das Thema
+            eingetragen. Die Gruppe 1 ist mit 2 Teilnehmern zu groß für die restlichen Plätze und kann nicht mehr an der
+            Vergabe teilnehmen. Da jetzt noch ein Platz bei diesem Thema frei ist, werden alle Studenten mit der
+            Zweitpräferenz aufgelistet, die ihre Erstpräferenz nicht erhalten haben. Da sich nur ein weiterer Student
+            (Student 4) um den letzten Platz beworben hat, wird Student 4 eingetragen.
+            Gewinnt allerdings Student 2 oder Student 3, so werden gleich beide Plätze an die Gruppe 1 vergeben. Für
+            Student 1 wird jetzt die Zweitpräferenz berücksichtigt. Für Student 4 seine Drittpräferenz.
+        <p>
+            In der <b>3. Phase</b> haben Sie die Möglichkeit, das Ihnen zugeteilte Thema anzusehen. Sie können dieses
+            mit einen noch freien Platz in einem anderen Thema tauschen. Dabei gilt das "first come, first served"
+            Prinzip. Eine Vormerkung für ein nicht mehr freies Thema können sie ebenfalls eintragen. Die Vormerkung wird
+            aktiv, sobald ein Student aus dem vollen Thema in das von Ihnen bereitgestellte Thema wechseln
+            möchte.<br><br>Sofern eine <b>Gruppe</b> das Thema wechseln möchte, muss der Gruppenleiter die Gruppe
+            zunächst auflösen. Anschließend kann jedes ehemalige Gruppenmitglied das gewünschte Thema wählen.
+
+
+    </div>
+
+{% endblock %}

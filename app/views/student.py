@@ -5,7 +5,7 @@ from flask_login import current_user, login_required
 
 bp_student = Blueprint("bp_student", __name__)
 
-@bp_student.route("/profil")
+@bp_student.route("/")
 @login_required
 def profil():
     student = Student.get_student(current_user.nds)

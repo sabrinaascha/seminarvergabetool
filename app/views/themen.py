@@ -36,11 +36,6 @@ def themen_by_art(art_typ):
 
 
 
-def submit_themenwahl():
-    return None
-
-
-
 
 
 

@@ -4,18 +4,18 @@
 
 <!-- Header -->
 <div class="w3-container w3-center w3-padding-32">
-    <h1><b>Profil</b></h1>
+    <h1><b>Profil Informationen</b></h1>
 </div>
 
 <div class="w3-container w3-margin-top">
-    <!-- Profil Section -->
      <div id="Profil" class="w3-card-4 w3-margin-bottom w3-padding">
         <div class="w3-row" style="display: flex; align-items: center;">
-            <div class="w3-third w3-center">
-                <i class="fa fa-user w3-xxlarge"></i>
-                <h3>Profil</h3>
+            <div class="w3-quarter w3-center">
+                <i class="fa fa-user w3-jumbo"></i>
+
             </div>
-            <div class="w3-twothird w3-left-align">
+            <div class="w3-threequarter w3-left-align">
+                <h3><b>Dein Profil</b></h3>
                 <p><b>Name:</b> {{ mitarbeiter.vorname }} {{ mitarbeiter.nachname }}</p>
                 <p><b>NDS-Kennung:</b> {{ mitarbeiter.nds }}</p>
                 <p><b>Lehrstuhl:</b> {{ mitarbeiter.lehrstuhl.name }}</p>
@@ -23,35 +23,44 @@
         </div>
     </div>
 
-    <!-- Lehrstuhl Section -->
     <div id="Lehrstuhl" class="w3-card-4 w3-margin-bottom w3-padding">
         <div class="w3-row" style="display: flex; align-items: center;">
-            <div class="w3-third w3-center">
-                <i class="fa fa-university w3-xxlarge"></i>
-                <h3>Dein Lehrstuhl</h3>
+            <div class="w3-quarter w3-center">
+                <i class="fa fa-university w3-jumbo"></i>
             </div>
-            <div class="w3-twothird w3-left-align">
+            <div class="w3-threequarter w3-left-align">
+                <h3> <b> Mitarbeiter: </b> {{ mitarbeiter.lehrstuhl.name }}
+                <a href="{{ url_for('bp_mitarbeiter.add_betreuer') }}" class="w3-button w3-fids-color w3-right w3-small">
+                        <i class="fa fa-plus"></i>
+                    </a> </h3>
                 <ul class="w3-ul">
                     {% for lm in mitarbeiter.lehrstuhl.lehrstuhl_mitarbeiter %}
-                        <li>{{ lm.nachname }}, {{ lm.vorname }}</li>
+                        <li>{{ lm.nachname }}, {{ lm.vorname }} ({{ lm.nds }})</li>
                     {% endfor %}
                 </ul>
             </div>
         </div>
     </div>
 
-    <!-- Themen Section -->
     <div id="Themen" class="w3-card-4 w3-margin-bottom w3-padding">
         <div class="w3-row" style="display: flex; align-items: center;">
-            <div class="w3-third w3-center">
-                <i class="fa fa-book w3-xxlarge"></i>
-                <h3>Unsere Themen</h3>
-                <a href="{{ url_for('bp_mitarbeiter.add_thema') }}" class="w3-button w3-fids-color w3-margin-top">Thema hinzufügen</a>
+            <div class="w3-quarter w3-center">
+                <i class="fa fa-book w3-jumbo"></i> <br>
             </div>
-            <div class="w3-twothird w3-left-align">
-                <ul class="w3-ul">
-                   {% for projekt in projekte %}
-                        <li>{{ projekt.titel }}, ({{projekt.betreuer }})</li>
+            <div class="w3-threequarter w3-left-align">
+            <h3><b>Unsere Themen</b>
+                <a href="{{ url_for('bp_mitarbeiter.add_projekt') }}" class="w3-button w3-fids-color w3-right w3-small"><i class="fa fa-plus"></i></a></h3>
+                 <ul class="w3-ul">
+                    {% for projekt in projekte %}
+                    <li class="{{ projekt.art.get_color() }}">
+
+                        <span>{{ projekt.titel }}
+                            ({% for b in projekt.betreuer %}
+                                {{- ' ' if not loop.first }}{{ b.vorname }} {{ b.nachname }}{{- ',' if not loop.last -}}
+                            {% endfor %})
+                        </span>
+                        <a href="{{ url_for('bp_mitarbeiter.edit_projekt', projekt_id=projekt.projekt_id) }}" class="w3-right w3-text-black w3-hover-text-grey fa fa-pencil w3-text-black" ></a>
+                    </li>
                     {% endfor %}
                 </ul>
             </div>
