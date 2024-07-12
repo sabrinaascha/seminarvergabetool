@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+    <div class="w3-container w3-center w3-padding-top-32">
+    <!--  different headline based on the condition of a project is edited or newly created (and different url for from) -->
+        <h1><b>{% if projekt %}Thema bearbeiten{% else %}Thema einstellen{% endif %}</b></h1>
+    </div>
+
+
+    <form method="POST" action="
+            {% if projekt %}{{ url_for('bp_mitarbeiter.edit_projekt', projekt_id=projekt.projekt_id) }}{% else %}{{ url_for('bp_mitarbeiter.add_projekt') }} {% endif %}"
+          class="w3-container w3-center">
+        <div class="w3-section w3-row-padding">
+            <label for="titel" class="w3-col l3 w3-right-align bold">Titel</label>
+            <input type="text" id="titel" name="titel" class="w3-input w3-border w3-col l9 w3-left-align"
+                   maxlength="200" value="{{ request.form.titel or projekt.titel if projekt else '' }}" required>
+        </div>
+
+        <div class="w3-section w3-row-padding">
+            <label for="beschreibung" class="w3-col l3 w3-right-align">Beschreibung</label>
+            <textarea id="beschreibung" name="beschreibung" class="w3-input w3-border w3-col l9 w3-left-align" rows="5"
+                      maxlength="2500"
+                      required>{{ request.form.beschreibung or projekt.beschreibung if projekt else '' }}</textarea>
+        </div>
+
+
+        <div class="w3-section w3-row-padding">
+            <label for="studiengang" class="w3-col l3 w3-right-align">Studiengang</label>
+            <select id="studiengang" name="studiengang" class="w3-select w3-border w3-col l9 w3-left-align" required>
+                <option value="" disabled selected hidden></option>
+                {% for sg in studiengaenge %}
+                    <option value="{{ sg.studiengang_id }}"
+                            {% if request.form.studiengang == sg.studiengang_id|string or (projekt and projekt.studiengang_studiengang_id == sg.studiengang_id) %}selected{% endif %}>
+                        {{ sg.bezeichnung }} ({{ sg.abschluss }})
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="w3-section w3-row-padding">
+            <label for="fach" class="w3-col l3 w3-right-align">Geeignet für</label>
+            <select id="fach" name="fach" class="w3-select w3-border w3-col l9 w3-left-align" required>
+                <option value="" disabled selected hidden></option>
+                {% for f in faecher %}
+                    <option value="{{ f.fach_id }}"
+                            {% if request.form.fach == f.fach_id|string or (projekt and projekt.fach_fach_id == f.fach_id) %}selected{% endif %}>
+                        {{ f.bezeichnung }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="w3-section w3-row-padding">
+            <label for="art" class="w3-col l3 w3-right-align">Art</label>
+            <select id="art" name="art" class="w3-select w3-border w3-col l9 w3-left-align" required>
+                <option value="" disabled selected hidden></option>
+                {% for a in arten %}
+                    <option value="{{ a.art_id }}"
+                            {% if request.form.art == a.art_id|string or (projekt and projekt.art_art_id == a.art_id) %}selected{% endif %}>
+                        {{ a.art_typ }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+<!-- dynamically updated by java script depending on the preselection of the "art"  -->
+        <div class="w3-section w3-row-padding">
+            <label for="max_anzahl" class="w3-col l3 w3-right-align">Anzahl Studenten</label>
+            <input type="number" id="max_anzahl" name="max_anzahl" class="w3-input w3-border w3-col l9 w3-left-align"
+                   min="1" value="{{ request.form.max_anzahl or projekt.max_anzahl if projekt else '' }}">
+        </div>
+
+        {% if is_admin %}
+
+            <div class="w3-section w3-row-padding">
+                <label for="lehrstuhl" class="w3-col l3 w3-right-align">Lehrstuhl</label>
+                <select id="lehrstuhl" name="lehrstuhl" class="w3-select w3-border w3-col l9 w3-left-align" required>
+                    <option value="" disabled selected hidden></option>
+                    {% for lehrstuhl in lehrstuehle %}
+                        <option value="{{ lehrstuhl.lehrstuhl_id }}"
+                                {% if request.form.lehrstuhl == lehrstuhl.lehrstuhl_id|string or (projekt and projekt.lehrstuhl_lehrstuhl_id == lehrstuhl.lehrstuhl_id) %}selected{% endif %}>
+                            {{ lehrstuhl.name }} ({{ lehrstuhl.professor }})
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- dynamically updated with filterBetreuer in JavaScript, depending on the preselected chair  -->
+            <div class="w3-section w3-row-padding">
+                <label for="betreuer" class="w3-col l3 w3-right-align">Betreuer</label>
+                <select id="betreuer" name="betreuer" class="w3-select w3-border w3-col l9 w3-left-align" multiple
+                        required>
+                    {% for m in mitarbeiter %}
+                        <option value="{{ m.ma_id }}" data-lehrstuhl="{{ m.lehrstuhl_lehrstuhl_id }}"
+                                {% if projekt and m in projekt.betreuer %}selected{% endif %}>
+                            {{ m.vorname }} {{ m.nachname }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+        {% else %}
+            <!-- non-admin employees can only select advisors of their chair  -->
+            <div class="w3-section w3-row-padding">
+                <label for="betreuer" class="w3-col l3 w3-right-align">Betreuer</label>
+                <select id="betreuer" name="betreuer" class="w3-select w3-border w3-col l9 w3-left-align" multiple
+                        required>
+                    {% for m in user.lehrstuhl.lehrstuhl_mitarbeiter %}
+                        <option value="{{ m.ma_id }}" {% if projekt and m in projekt.betreuer %}selected{% endif %}>
+                            {{ m.vorname }} {{ m.nachname }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+        {% endif %}
+
+
+        <div class="w3-row-padding w3-margin-bottom w3-center">
+            <input type="submit" value="{% if projekt %}Aktualisieren{% else %}Einstellen{% endif %}"
+                   class="w3-button w3-fids-color w3-large w3-margin-top w3-round"/>
+            {% if projekt %}
+                <a href="{{ url_for('bp_mitarbeiter.delete_projekt', projekt_id=projekt.projekt_id) }}"
+                   class="w3-button w3-fids-color w3-large w3-margin-top w3-round">Löschen</a>
+            {% endif %}
+
+            {% if is_admin %}
+                <a href="{{ url_for('bp_mitarbeiter.admin') }}"
+                   class="w3-button w3-fids-color w3-large w3-margin-top w3-round">Zurück</a>
+            {% else %}
+                <a href="{{ url_for('bp_mitarbeiter.profil') }}"
+                   class="w3-button w3-fids-color w3-large w3-margin-top w3-round">Zurück</a>
+            {% endif %}
+        </div>
+    </form>
+
+
+
+    <script>
+    //the max_anzahl and betreuer filter is used, when the page is loaded or any change in art (max_anzahl) or lehrstuhl (betreuer) is made
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('art').addEventListener('change', anzahl_update);
+            document.getElementById('lehrstuhl').addEventListener('change', filterBetreuer);
+            filterBetreuer();
+            anzahl_update();
+        });
+
+        // as max_anzahl for bachelorthesis and masterthesis is always 1, the input here has tp be disabled
+        function anzahl_update() {
+            var artSelect = document.getElementById('art');
+            var maxAnzahlInput = document.getElementById('max_anzahl');
+            var selectedArtId = artSelect.value;
+
+            if (selectedArtId == 1 || selectedArtId == 3) {
+                maxAnzahlInput.value = 1;
+                maxAnzahlInput.disabled = true;
+            } else {
+                maxAnzahlInput.disabled = false;
+            }
+        }
+
+        //used to filter the list of "betreuer" after selecting a respective chair
+        function filterBetreuer() {
+            var selectedLehrstuhl = document.getElementById('lehrstuhl').value;
+            var betreuerSelect = document.getElementById("betreuer");
+
+            for (var i = betreuerSelect.options.length - 1; i >= 0; i--) {
+                var option = betreuerSelect.options[i];
+                //the betreuer get grouped by their chair, and only get displayed if this chair is selected within the form
+                if (option.getAttribute('data-lehrstuhl') !== selectedLehrstuhl) {
+                    option.style.display = 'none';
+                    option.disabled = true;
+                } else {
+                    option.style.display = 'block';
+                    option.disabled = false;
+                }
+            }
+        }
+    </script>
+
+{% endblock %}
+

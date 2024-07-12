@@ -1,105 +1,158 @@
-{% extends 'layout/layout.html' %}
+{% extends 'base.html' %}
 
-{% block pageContent %}
+{% block body %}
 
+    <div class="w3-section w3-center w3-padding-top-32">
+        <h1><b>Willkommen auf der Startseite der Vergabetools.</b></h1>
+        <div class="w3-container w3-left-align">
+            {% if current_user.is_authenticated %}
+                <p>Hallo {{ current_user.vorname }} {{ current_user.nachname }} ({{ current_user.nds }}), <br>
+                    herzlich Willkommen auf dem Vergabesystem für Abschlussarbeiten und Seminare für
+                    das {{ phasen.semester }}.
+                </p>
+            {% else %}
+                <p>Liebe Studierende, <br>
+                <p>Sie sind aktuell nicht angemeldet. Bitte melden Sie sich an, um das System vollumfänglich nutzen zu
+                    können.</p>
+            {% endif %}
 
-<div class="w3-container w3-center w3-padding-32" >
-    <h1><b>Willkommen auf der Startseite der Vergabetools.</b></h1>
-</div>
-
-
-<div class="w3-container w3-white w3-center">
-{% if current_user.is_authenticated %}
-    <p>Hallo {{ current_user.vorname }} {{ current_user.nachname }} ({{ current_user.nds }}),</p>
-{% else %}
-    <p>Liebe Studierende, <br>
-    <p>Sie sind aktuell nicht angemeldet. Bitte melden Sie sich an, um das System vollumfänglich nutzen zu können.</p>
-        <a href="{{ url_for('bp_auth.login')}}"
-                class="w3-button w3-fids-color w3-padding-large w3-large w3-margin-top w3-round">Login</a>
-
-{% endif %}
-    über den Reiter <b>"Themen"</b> können sie zu den einzelnen
-    Seminaren und Abschlussarbeiten die aktuell angebotenen Themen der Lehrstühle einsehen
-        und nach ihren Bedürfnissen zu filtern. In dem Reiter <b>"Regeln"</b> können Sie alle relevanten
-    Informationen zum Vergabeprozess und dessen Zeitablauf nachlesen. In Ihrem <b>"Profil"</b>
-    haben Sie zudem die Möglichkeit, ihre registrierten Daten abzurufen als auch die Priorisierung der Themen vorzunehmen.</p>
-
-    <p>Um am aktuellen Vergabeprozess für Abschlussarbeiten und Seminare teilzunehmen, melden Sie sich bitte mit ihrem NDS-Kennung an und klicken Sie auf <b>"Registrieren"</b>.</p>
-{% if current_user.is_authenticated %}
-
-     <a href="{{ url_for('bp_auth.logout')}}"
-                class="w3-button w3-fids-color w3-padding-large w3-large w3-margin-top w3-round">Logout</a>
-     <a href="{{ url_for('bp_auth.register')}}"
-                class="w3-button w3-fids-color w3-padding-large w3-large w3-margin-top w3-round">Registrieren</a>
-
-{% else %}
-        <a href="{{ url_for('bp_auth.login')}}"
-                class="w3-button w3-fids-color w3-padding-large w3-large w3-margin-top w3-round">Login</a>
-{% endif %}
-
-
-
-
-</div>
-
-
-<div class="w3-container w3-margin-top w3-center">
-    <h2>Aktuelle Themen der Lehrstühle</h2>
-    <div class="w3-row-padding">
-        <div class ="w3-col l1 w3-margin-bottom"><!-- da sonst 2 Spalten rechts falls großer Bildschirm -->
-            <p></p>
+            <p><b>Themen:</b> Hier können sie zu den einzelnen
+                Seminaren und Abschlussarbeiten die aktuell angebotenen Themen der Lehrstühle einsehen
+                und nach ihren Bedürfnissen zu filtern. <br>
+                <b>Regeln</b>: Hier können Sie Informationen zum Vergabeprozess der Themen und dessen Zeitablauf
+                nachlesen. <br>
+                <b>Profil:</b> Hier haben Sie zudem die Möglichkeit, ihre registrierten Daten abzurufen, die
+                Priorisierung der Themen
+                vorzunehmen als auch ihr erhaltenes Thema einzusehen.</p>
         </div>
-        <div class="w3-col l2 m4 s6 w3-margin-bottom w3-center">
-            <a href="{{ url_for('bp_themen.themen_by_art', art_typ='Bachelorarbeit') }}">
-                <img src="static/images/quadratic/bachelorarbeit.png" alt="Bachelorarbeit" class="w3-image w3-circle w3-hover-opacity" >
-            </a>
-            <p>Bachelorarbeit</p>
-        </div>
-        <div class="w3-col l2 m4 s6 w3-margin-bottom w3-center">
-            <a href="{{ url_for('bp_themen.themen_by_art', art_typ='Projektseminar') }}">
-                <img src="static/images/quadratic/projektseminar.png" alt="Projektseminar" class="w3-image w3-circle w3-hover-opacity" >
-            </a>
-            <p>Projektseminar</p>
-        </div>
-        <div class="w3-col l2 m4 s6 w3-margin-bottom w3-center">
-            <a href="{{ url_for('bp_themen.themen_by_art', art_typ='Masterarbeit') }}">
-                <img src="static/images/quadratic/masterarbeit.png" alt="Masterarbeit" class="w3-image w3-circle w3-hover-opacity">
-            </a>
-            <p>Masterarbeit</p>
-        </div>
-        <div class="w3-col l2 m4 s6 w3-margin-bottom w3-center">
-            <a href="{{ url_for('bp_themen.themen_by_art', art_typ='Praxisseminar') }}">
-                <img src="static/images/quadratic/praxisseminar.png" alt="Praxisseminar" class="w3-image w3-circle w3-hover-opacity">
-            </a>
-            <p>Praxisseminar</p>
-        </div>
-        <div class="w3-col l2 m4 s6 w3-margin-bottom w3-center">
-            <a href="{{ url_for('bp_themen.themen_by_art', art_typ='Theoretisches Seminar') }}">
-                <img src="static/images/quadratic/theoretischesseminar.png" alt="Theoretisches Seminar" class="w3-image w3-circle w3-hover-opacity">
-            </a>
-            <p>Theoretisches Seminar</p>
+
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('bp_auth.logout') }}"
+               class="w3-button w3-fids-color w3-large w3-padding-large w3-round">Logout</a>
+        {% else %}
+            <a href="{{ url_for('bp_auth.login') }}"
+               class="w3-button w3-fids-color w3-padding-large w3-large w3-round">Login</a>
+        {% endif %}
+
+    </div>
+
+    <!--- topics of the chairs (rendering to filetred view of topic overview page) --->
+    <div class="w3-container w3-center">
+        <h2>Aktuelle Themen der Lehrstühle</h2>
+        <div class="w3-row-padding">
+            <div class="w3-col l1 w3-margin-bottom"><!-- necessary, else not 12 columns in summary -->
+                <p></p>
+            </div>
+            <div class="w3-col l2 m4 s6 w3-margin-bottom w3-center">
+                <a href="{{ url_for('bp_index.themen', art_filter='Bachelorarbeit') }}">
+                    <img src="static/images/quadratic/bachelorarbeit.png" alt="Bachelorarbeit"
+                         class="w3-image w3-circle w3-hover-opacity">
+                </a>
+                <p>Bachelorarbeit</p>
+            </div>
+            <div class="w3-col l2 m4 s6 w3-margin-bottom w3-center">
+                <a href="{{ url_for('bp_index.themen', art_filter='Projektseminar') }}">
+                    <img src="static/images/quadratic/projektseminar.png" alt="Projektseminar"
+                         class="w3-image w3-circle w3-hover-opacity">
+                </a>
+                <p>Projektseminar</p>
+            </div>
+            <div class="w3-col l2 m4 s6 w3-margin-bottom w3-center">
+                <a href="{{ url_for('bp_index.themen', art_filter='Masterarbeit') }}">
+                    <img src="static/images/quadratic/masterarbeit.png" alt="Masterarbeit"
+                         class="w3-image w3-circle w3-hover-opacity">
+                </a>
+                <p>Masterarbeit</p>
+            </div>
+            <div class="w3-col l2 m4 s6 w3-margin-bottom w3-center">
+                <a href="{{ url_for('bp_index.themen', art_filter='Praxisseminar') }}">
+                    <img src="static/images/quadratic/praxisseminar.png" alt="Praxisseminar"
+                         class="w3-image w3-circle w3-hover-opacity">
+                </a>
+                <p>Praxisseminar</p>
+            </div>
+            <div class="w3-col l2 m4 s6 w3-margin-bottom w3-center">
+                <a href="{{ url_for('bp_index.themen', art_filter='Theoretisches Seminar') }}">
+                    <img src="static/images/quadratic/theoretischesseminar.png" alt="Theoretisches Seminar"
+                         class="w3-image w3-circle w3-hover-opacity">
+                </a>
+                <p>Theoretisches Seminar</p>
+            </div>
         </div>
     </div>
 
-    <div class="w3-container w3-center w3-padding-32">
-        <h2>Hinweise zur Themenvergabe</h2>
-    </div>
-    <div class="w3-panel w3-card w3-center">
-        <h3>1. Phase</h3>
-        <p>In der ersten Phase können Sie sich für die Teilnahme an der Vergabe registrieren.<br>
-        <strong>{{ phasen.phase1_start }} bis {{ phasen.phase1_end }}</strong></p>
-        <p>Themenvorstellung der Lehrstühle:<br>
-        22.01 bis 26.01.2024</p>
 
-        <h3>2. Phase</h3>
-        <p>In der zweiten Phase können Sie Themen auswählen. Nach der zweiten Phase erfolgt die Vergabe der Plätze in den einzelnen Themen.<br>
-        <strong>{{ phasen.phase2_start }} bis {{ phasen.phase2_end }}</strong></p>
-
-        <h3>3. Phase</h3>
-        <p>In der dritten Phase können Sie Ihr erhaltenes Thema einsehen, es ablehnen oder ein freies Thema wählen, sofern Ihnen beim Vergabeprozess kein Thema zugeteilt werden konnte.<br>
-        <strong>{{ phasen.phase3_start }} bis {{phasen.phase3_end }}</strong></p>
-    </div>
+    <!--- allocation process -->
+    {% if phasen %}
+        <div class="w3-container w3-center">
+        <h2>Vergabeprozess</h2>
+        <table class="w3-table w3-centered">
+            <tr>
+                <td style="width: 30%;">
+                    <!-- card for registration phase -->
+                    <div id="p1" class="w3-card-4">
+                        <header class="w3-container {% if phase1_active %}w3-fids-color{% else %}w3-grey{% endif %}">
+                            <h5>Registrierung</h5>
+                        </header>
+                        <div class="w3-container">
+                            <p>In der ersten Phase können Sie Themen <br>
+                                Zeitraum: {{ phasen.start_p1.strftime('%d.%m.%Y %H:%M') }}
+                                bis {{ phasen.ende_p1.strftime('%d.%m.%Y %H:%M') }}</p>
+                            <p>Themenvorstellung der
+                                Lehrstühle: {{ phasen.start_vorstellung.strftime('%d.%m.%Y %H:%M') }}
+                                bis {{ phasen.ende_vorstellung.strftime('%d.%m.%Y %H:%M') }} </p>
+                            {% if current_user.is_authenticated %}
+                                <a id="button-p1" href="{{ url_for('bp_student.register') }}"
+                                   class="w3-button w3-fids-color w3-margin w3-round {% if not phase1_active %}w3-hide{% endif %}">Zur
+                                    Registrierung</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </td>
+                <td style="width: 5%;">
+                    <div class="arrow-right"></div>
+                </td>
+                <td style="width: 30%;">
+                <!-- card for topic selection phase -->
+                    <div id="p2" class="w3-card-4">
+                        <header class="w3-container {% if phase2_active %}w3-fids-color{% else %}w3-grey{% endif %}">
+                            <h5>Themenwahl</h5>
+                        </header>
+                        <div class="w3-container">
+                            <p>In der zweiten Phase können Sie Themen auswählen und Ihre Priorisierung abgeben. Nach der
+                                zweiten Phase erfolgt die Vergabe der Plätze
+                                in den einzelnen Themen. <br>
+                                Zeitraum: {{ phasen.start_p2.strftime('%d.%m.%Y %H:%M') }}
+                                bis {{ phasen.ende_p2.strftime('%d.%m.%Y %H:%M') }}</p>
+                            {% if current_user.is_authenticated and current_user.is_student %}
+                                <a id="button-p2" href="{{ url_for('bp_student.themenwahl') }}"
+                                   class="w3-button w3-fids-color w3-margin w3-round {% if not phase2_active %}w3-hide{% endif %}">Zur
+                                    Themenwahl</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </td>
+                <td style="width: 5%;">
+                    <div class="arrow-right"></div>
+                </td>
+                <td style="width: 30%;">
+                <!-- card for allocation phase -->
+                    <div id="p3" class="w3-card-4">
+                        <header class="w3-container {% if phase3_active %}w3-fids-color{% else %}w3-grey{% endif %}">
+                            <h5>Themenvergabe</h5>
+                        </header>
+                        <div class="w3-container">
+                            <p>In der dritten Phase können Sie Ihr erhaltenes Thema einsehen, es ablehnen oder ein
+                                freies Thema wählen,
+                                sofern Ihnen beim Vergabeprozess kein Thema zugeteilt werden konnte.<br>
+                                Zeitraum: {{ phasen.start_p3.strftime('%d.%m.%Y %H:%M') }}
+                                bis {{ phasen.ende_p3.strftime('%d.%m.%Y %H:%M') }}</p>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    {% endif %}
 </div>
-
 
 {% endblock %}

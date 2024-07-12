@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+    <div class="w3-container w3-center w3-padding-top-32">
+    <!--  different headline based on the condition of a chair is edited or newly created -->
+        <h1><b>{% if lehrstuhl %}Lehrstuhl bearbeiten{% else %}Lehrstuhl hinzufügen{% endif %}</b></h1>
+    </div>
+
+    <form method="POST"
+          action="{{ url_for('bp_mitarbeiter.edit_lehrstuhl', lehrstuhl_id=lehrstuhl.lehrstuhl_id) if lehrstuhl else url_for('bp_mitarbeiter.add_lehrstuhl') }}"
+          class="w3-container w3-center">
+    <!--  different url route based on the condition if a chair is edited or newly created -->
+
+        <div class="w3-section w3-row-padding">
+            <label for="name" class="w3-col l3 w3-right-align bold">Name</label>
+            <!-- prefillment of the values within the form  if a chair is edited (with values from database or) -->
+            <input type="text" id="name" name="name" class="w3-input w3-border w3-col l9 w3-left-align" maxlength="100"
+                   value="{{ request.form.name or lehrstuhl.name if lehrstuhl else '' }}" required/>
+        </div>
+
+        <div class="w3-section w3-row-padding">
+            <label for="professor" class="w3-col l3 w3-right-align">Professor (Nachname)</label>
+            <input type="text" id="professor" name="professor" class="w3-input w3-border w3-col l9 w3-left-align"
+                   maxlength="100" value="{{ request.form.professor or lehrstuhl.professor if lehrstuhl else '' }}"
+                   required/>
+        </div>
+
+        <div class="w3-section w3-row-padding">
+            <label for="homepage" class="w3-col l3 w3-right-align">Homepage</label>
+            <input type="url" id="homepage" name="homepage" class="w3-input w3-border w3-col l9 w3-left-align"
+                   maxlength="100" value="{{ request.form.homepage or lehrstuhl.homepage if lehrstuhl else '' }}"
+                   required/>
+        </div>
+
+        <!-- buttons for submitting the form, delete the chair or go back to the profile -->
+        <div class="w3-row-padding w3-margin-bottom w3-center">
+            <input type="submit" value="{% if lehrstuhl %}Aktualisieren{% else %}Hinzufügen{% endif %}"
+                   class="w3-button w3-fids-color w3-large w3-margin-top w3-round"/>
+            {% if lehrstuhl %}
+                <a href="{{ url_for('bp_mitarbeiter.delete_lehrstuhl', lehrstuhl_id=lehrstuhl.lehrstuhl_id) }}"
+                   class="w3-button w3-fids-color w3-large w3-margin-top w3-round">Löschen</a>
+            {% endif %}
+            <a href="{{ url_for('bp_mitarbeiter.admin') }}"
+               class="w3-button w3-fids-color w3-large w3-margin-top w3-round">Zurück</a>
+        </div>
+    </form>
+
+{% endblock %}

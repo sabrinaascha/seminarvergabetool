@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+    <!-- differentiation between editing (if Student = true) and creation (Student = null)--->
+    <div class="w3-container w3-center w3-padding-top-32">
+        <h1><b>{% if student %}Student bearbeiten{% else %}Student hinzufügen{% endif %}</b></h1>
+    </div>
+
+    <form method="POST" action="
+            {% if student %}{{ url_for('bp_mitarbeiter.edit_student', stud_id=student.stud_id) }}{% else %}{{ url_for('bp_mitarbeiter.add_student') }}{% endif %}"
+          class="w3-container w3-center">
+        <div class="w3-section w3-row-padding">
+            <label for="vorname" class="w3-col l3 w3-right-align bold">Vorname</label>
+            <!-- prefillment of the values within the form  if a student is edited instead of created -->
+            <input type="text" id="vorname" name="vorname" class="w3-input w3-border w3-col l9 w3-left-align"
+                   maxlength="20" value="{{ request.form.vorname or student.vorname if student else '' }}" required/>
+        </div>
+
+        <div class="w3-section w3-row-padding">
+            <label for="nachname" class="w3-col l3 w3-right-align">Nachname</label>
+            <input type="text" id="nachname" name="nachname" class="w3-input w3-border w3-col l9 w3-left-align"
+                   maxlength="30" value="{{ request.form.nachname or student.nachname if student else '' }}" required/>
+        </div>
+
+        <div class="w3-section w3-row-padding">
+            <label for="nds" class="w3-col l3 w3-right-align">NDS-Kennung</label>
+            <input type="text" id="nds" name="nds" class="w3-input w3-border w3-col l9 w3-left-align" maxlength="10"
+                   value="{{ request.form.nds or student.nds if student else '' }}" required/>
+        </div>
+
+        <div class="w3-section w3-row-padding">
+            <label for="email" class="w3-col l3 w3-right-align">Email</label>
+            <input type="email" id="email" name="email" class="w3-input w3-border w3-col l9 w3-left-align"
+                   maxlength="50" value="{{ request.form.email or student.email if student else '' }}" required/>
+        </div>
+
+        <div class="w3-section w3-row-padding">
+            <label for="matrikelnummer" class="w3-col l3 w3-right-align">Matrikelnummer</label>
+            <input type="number" id="matrikelnummer" name="matrikelnummer"
+                   class="w3-input w3-border w3-col l9 w3-left-align" maxlength="10"
+                   value="{{ request.form.matrikelnummer or student.matrikelnummer if student else '' }}" required/>
+        </div>
+
+        <div class="w3-section w3-row-padding">
+            <label for="studiengang" class="w3-col l3 w3-right-align">Studiengang</label>
+            <select id="studiengang" name="studiengang" class="w3-select w3-border w3-col l9 w3-left-align" required>
+                {% for studiengang in studiengaenge %}
+                    <option value="{{ studiengang.studiengang_id }}"
+                            {% if request.form.studiengang == studiengang.studiengang_id|string or (student and student.studiengang_studiengang_id == studiengang.studiengang_id) %}selected{% endif %}>
+                        {{ studiengang.bezeichnung }} ({{ studiengang.abschluss }})
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        {% if not student %}
+            <!-- if the admin has to create a student, he has to chose the types of work the student wants to register for  -->
+            <!-- the modification of that "art"  (e.g. deletion from students existing arten) in priorities_form together with selection of 3 priorities-->
+            <div class="w3-row-padding w3-margin-bottom">
+                <div class="w3-col l3 w3-right-align">
+                    <label for="registrieren">Registrierung für:</label>
+                </div>
+                <div class="w3-col l9 w3-left-align">
+                    <div class="w3-row">
+                        <div class="w3-col l12">
+                            <input type="checkbox" id="bachelorarbeit" name="arten" value="1" class="w3-check"/>
+                            <label for="bachelorarbeit" class="w3-margin-left">Bachelorarbeit</label>
+                        </div>
+                    </div>
+                    <div class="w3-row">
+                        <div class="w3-col l12">
+                            <input type="checkbox" id="projektseminar" name="arten" value="2" class="w3-check"/>
+                            <label for="projektseminar" class="w3-margin-left">Projektseminar</label>
+                        </div>
+                    </div>
+                    <div class="w3-row">
+                        <div class="w3-col l12">
+                            <input type="checkbox" id="masterarbeit" name="arten" value="3" class="w3-check"/>
+                            <label for="masterarbeit" class="w3-margin-left">Masterarbeit</label>
+                        </div>
+                    </div>
+                    <div class="w3-row">
+                        <div class="w3-col l12">
+                            <input type="checkbox" id="theoretisches_seminar" name="arten" value="4" class="w3-check"/>
+                            <label for="theoretisches_seminar" class="w3-margin-left">Theoretisches Seminar</label>
+                        </div>
+                    </div>
+                    <div class="w3-row">
+                        <div class="w3-col l12">
+                            <input type="checkbox" id="praktisches_seminar" name="arten" value="5" class="w3-check"/>
+                            <label for="praktisches_seminar" class="w3-margin-left">Praktisches Seminar</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="w3-row-padding w3-margin-bottom w3-center">
+            <input type="submit" value="{% if student %}Aktualisieren{% else %}Hinzufügen{% endif %}"
+                   class="w3-button w3-fids-color w3-large w3-margin-top w3-round"/>
+            {% if student %}
+                <a href="{{ url_for('bp_mitarbeiter.delete_student', stud_id=student.stud_id) }}"
+                   class="w3-button w3-fids-color w3-large w3-margin-top w3-round">Löschen</a>
+            {% endif %}
+            <a href="{{ url_for('bp_mitarbeiter.admin') }}"
+               class="w3-button w3-fids-color w3-large w3-margin-top w3-round">Zurück</a>
+        </div>
+    </form>
+
+
+
+{% endblock %}

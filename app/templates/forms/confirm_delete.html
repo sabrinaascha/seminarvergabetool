@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+
+    <div class="w3-container w3-center w3-padding-top-32">
+        <h1>Löschen</h1>
+
+        <!-- differentiation depending on the object which is passed to the delete-route -->
+        {% if projekt %}
+            <p>Sind Sie sicher, dass Sie das Projekt "{{ projekt.titel }}" ({{ projekt.lehrstuhl.name }}) löschen
+                möchten?</p>
+        {% elif mitarbeiter %}
+            <p>Sind Sie sicher, dass Sie den/die Mitarbeiter(-in) {{ mitarbeiter.nachname }} {{ mitarbeiter.vorname }}
+                ({{ mitarbeiter.lehrstuhl.name }}) löschen möchten?</p>
+        {% elif lehrstuhl %}
+            <p>Sind Sie sicher, dass Sie den Lehrstuhl {{ lehrstuhl.name }} ({{ lehrstuhl.professor }}) löschen
+                möchten?</p>
+        {% elif student %}
+            <p>Sind Sie sicher, dass Sie {{ student.vorname }} {{ student.nachname }} ({{ student.nds }}) und dessen
+                vorhandene Daten zur Themenwahl löschen möchten?</p>
+        {% elif phasen %}
+            <p class="w3-left-align">Wenn sie den Vergabeprozess des aktuellen Semesters ({{ phasen.semester }})
+                beenden, werden die <b>Daten der Studierenden und Ihre Auswahl der Themen aus der Datenbank
+                    gelöscht.</b><br>
+                Die Themen des aktuellen Semesters bleiben in der Datenbank vorhanden, werden jedoch als <b> nicht
+                    neu </b> gekennzeichnet.<br>
+                Im Anschluss haben Sie die Möglichkeit, die Zeiten zur Registrierung, Wahl und Vergabe für das nächste
+                Semester neu einzugeben.</p>
+            <p><b>Wollen Sie das Semester beenden?</b></p>
+        {% endif %}
+
+
+        <form method="POST" action="{% if projekt %}
+                                    {{ url_for('bp_mitarbeiter.delete_projekt', projekt_id=projekt.projekt_id) }}
+                                {% elif mitarbeiter %}
+                                  {{ url_for('bp_mitarbeiter.delete_mitarbeiter', ma_id=mitarbeiter.ma_id) }}
+                                {% elif lehrstuhl %}
+                                  {{ url_for('bp_mitarbeiter.delete_lehrstuhl', lehrstuhl_id=lehrstuhl.lehrstuhl_id) }}
+                                 {% elif student %}
+                                  {{ url_for('bp_mitarbeiter.delete_student', stud_id=student.stud_id) }}
+                                  {% elif phasen %}
+                                  {{ url_for('bp_mitarbeiter.delete_phasen') }}
+                                {% endif %}" class="w3-container w3-center">
+
+            <button type="submit" name="confirm" class="w3-button w3-fids-color w3-large w3-margin-top w3-round">Ja
+            </button>
+            <button type="submit" name="cancel" class="w3-button w3-fids-color w3-large w3-margin-top w3-round">Nein
+            </button>
+
+        </form>
+
+    </div>
+
+
+{% endblock %}

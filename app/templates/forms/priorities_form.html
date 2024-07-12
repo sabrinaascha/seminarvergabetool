@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+
+{% block body %}
+    <div class="w3-container w3-center w3-padding-top-32">
+        <h1>Priorisierungen bearbeiten: {{ student.vorname }} {{ student.nachname }}</h1>
+    </div>
+
+    <form method="POST" action="{{ url_for('bp_mitarbeiter.edit_priorities', stud_id=student.stud_id) }}"
+          class="w3-container w3-center">
+        <table class="w3-table w3-bordered w3-centered w3-striped">
+            <thead>
+            <tr>
+                <th>Art</th>
+                <th>Priorisierung</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for art in arten %}
+                <tr>
+                    <td class="w3-large">{{ art.art_typ }}</td>
+                    <td class="w3-left-align">
+                        {% if art.art_id in selected_arten %}
+                            {% if all_priorities.get(art.art_id) %}
+                                <!-- if student is registered and already made his prioritization-->
+                                <ul class="w3-ul">
+                                    <p>Aktuelle Priorisierungen:
+                                        <button type="submit" name="remove_art" value="{{ art.art_id }}"
+                                                class="w3-button w3-right w3-fids-color w3-round w3-small"><i
+                                                class="fa fa-minus"></i></button>
+                                    </p>
+                                    {% for prio, projekt in all_priorities[art.art_id].items() %}
+                                        <li>
+                                            <label for="prio{{ art.art_id }}{{ prio }}">Priorität {{ prio }}</label>
+                                            <!-- each selected value has to be "connected" to not only the prio (1,2,3) but also the respective "art"-->
+                                            <select id="prio{{ art.art_id }}{{ prio }}"
+                                                    name="prio{{ art.art_id }}{{ prio }}" class="w3-select w3-border"
+                                                    data-art="{{ art.art_id }}"
+                                                    onchange="updateDropdowns('{{ art.art_id }}')">
+                                                {% for projekt_option in projekte if projekt_option.art_art_id == art.art_id %}
+                                                    <option value="{{ projekt_option.projekt_id }}"
+                                                            {% if (projekt and projekt_option.projekt_id == projekt.projekt_id) %}selected{% endif %}>
+                                                        {{ projekt_option.titel }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                                <!--- every art has its own submit button -->
+                                <button type="submit" name="save_priorities" value="{{ art.art_id }}"
+                                        class="w3-button w3-fids-color w3-round w3-small">Speichern
+                                </button>
+                            {% else %}
+
+                                <!-- student is registered for that 'art' but didn't carry out the prioritizations yet-->
+                                <p>Keine Priorisierung hinterlegt
+                                    <button type="submit" name="remove_art" value="{{ art.art_id }}"
+                                            class="w3-button w3-right w3-fids-color w3-round w3-small"><i
+                                            class="fa fa-minus"></i></button>
+                                </p>
+                                <ul class="w3-ul">
+                                    <li>
+                                        <label for="prio{{ art.art_id }}1">Priorität 1</label>
+                                        <select id="prio{{ art.art_id }}1" name="prio{{ art.art_id }}1"
+                                                class="w3-select w3-border" data-art="{{ art.art_id }}"
+                                                onchange="updateDropdowns('{{ art.art_id }}')"
+                                                {% if 'save_priorities' in request.form %}required{% endif %}>
+                                            <option value="" disabled selected>Wählen Sie ein Thema</option>
+                                            {% for projekt_option in projekte if projekt_option.art_art_id == art.art_id %}
+                                                <option value="{{ projekt_option.projekt_id }}"
+                                                        {% if request.form.get('prio1') == projekt_option.projekt_id|string %}selected{% endif %}>
+                                                    {{ projekt_option.titel }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </li>
+                                    <li>
+                                        <label for="prio{{ art.art_id }}2">Priorität 2</label>
+                                        <select id="prio{{ art.art_id }}2" name="prio{{ art.art_id }}2"
+                                                class="w3-select w3-border" data-art="{{ art.art_id }}"
+                                                onchange="updateDropdowns('{{ art.art_id }}')"
+                                                {% if 'save_priorities' in request.form %}required{% endif %}>
+                                            <option value="" disabled selected>Wählen Sie ein Thema</option>
+                                            {% for projekt_option in projekte if projekt_option.art_art_id == art.art_id %}
+                                                <option value="{{ projekt_option.projekt_id }}"
+                                                        {% if request.form.get('prio2') == projekt_option.projekt_id|string %}selected{% endif %}>
+                                                    {{ projekt_option.titel }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </li>
+                                    <li>
+                                        <label for="prio{{ art.art_id }}3">Priorität 3</label>
+                                        <select id="prio{{ art.art_id }}3" name="prio{{ art.art_id }}3"
+                                                class="w3-select w3-border" data-art="{{ art.art_id }}"
+                                                onchange="updateDropdowns('{{ art.art_id }}')"
+                                                {% if 'save_priorities' in request.form %}required{% endif %}>
+                                            <option value="" disabled selected>Wählen Sie ein Thema</option>
+                                            {% for projekt_option in projekte if projekt_option.art_art_id == art.art_id %}
+                                                <option value="{{ projekt_option.projekt_id }}"
+                                                        {% if request.form.get('prio3') == projekt_option.projekt_id|string %}selected{% endif %}>
+                                                    {{ projekt_option.titel }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </li>
+                                </ul>
+                                <button type="submit" name="save_priorities" value="{{ art.art_id }}"
+                                        class="w3-button w3-fids-color w3-round w3-small w3-center">Speichern
+                                </button>
+                            {% endif %}
+                        {% else %}
+                            <!-- student is not registered for that 'art', but it can be added through the + button-->
+                            <p>Student nicht für diese Art registriert
+                                <button type="submit" name="add_art" value="{{ art.art_id }}"
+                                        class="w3-button w3-fids-color w3-round w3-small w3-right"><i
+                                        class="fa fa-plus"></i></button>
+                            </p>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="w3-row-padding w3-margin-bottom w3-center">
+            <a href="{{ url_for('bp_mitarbeiter.admin') }}"
+               class="w3-button w3-fids-color w3-large w3-margin-top w3-round">Zurück</a>
+        </div>
+    </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            //all dropdown elements  starting with 'prio' get selected
+            const dropdownElements = document.querySelectorAll('[id^=prio]');
+
+            dropdownElements.forEach(dropdown => {
+                //when values within a dropdown change, the respective dropdown gets updated
+                dropdown.addEventListener('change', function () {
+                    updateDropdowns(this.dataset.art);
+                });
+            });
+
+            // all dropdowns get initialized when loading the page (DOMContentLoaded)
+            updateAllDropdowns();
+        });
+
+        //function which seperates the dropdowns by art, because else only the first dropdown on the page is updated
+        function updateAllDropdowns() {
+            //all 3 dropdowns for a respective "art_id" (=data-art) get selected and are contained in the dataset art_ids
+            const artElements = document.querySelectorAll('[data-art]');
+            const artIds = [...new Set([...artElements].map(el => el.dataset.art))];
+
+            //the dropdown has to be updated for every different "art"
+            artIds.forEach(artId => updateDropdowns(artId));
+        }
+
+        // already selected values within one art-category get disabled (grey) in the dropdown
+        function updateDropdowns(artId) {
+            const prio1 = document.getElementById('prio' + artId + '1').value;
+            const prio2 = document.getElementById('prio' + artId + '2').value;
+            const prio3 = document.getElementById('prio' + artId + '3').value;
+
+            //for example for prio 2, the prio 1 and prio 2 values (projects) are not possible to select anymore
+            updateDropdownOptions('prio' + artId + '2', prio1, prio3);
+            updateDropdownOptions('prio' + artId + '3', prio1, prio2);
+        }
+
+        //disables the already chosen dropdown values, so they are excluded from further possible selections
+        function updateDropdownOptions(dropdownId, ...excludedValues) {
+            const dropdown = document.getElementById(dropdownId);
+            const options = dropdown.options;
+
+            for (let i = 0; i < options.length; i++) {
+                const option = options[i];
+                option.disabled = excludedValues.includes(option.value);
+            }
+        }
+    </script>
+
+{% endblock %}

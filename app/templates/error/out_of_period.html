@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+
+    <!-- Header -->
+    <div class="w3-container w3-center w3-padding-top-32">
+        <h1 class="w3-text-red"><b>Zugriff eingeschränkt</b></h1>
+    </div>
+
+    <div class="w3-panel w3-fids-color">
+        <p>Diese Funktion ist zum aktuellen Zeitpunkt nicht möglich. </p>
+        <p>Bitte versuchen Sie es zu einem späteren Zeitpunkt erneut.</p>
+    </div>
+
+
+    <div class="w3-container w3-padding-16">
+        <a href="{{ url_for('bp_index.index') }}"
+           class="w3-button w3-fids-color w3-padding-large w3-large w3-margin-top w3-round">Erneut Laden</a>
+    </div>
+
+
+{% endblock %}

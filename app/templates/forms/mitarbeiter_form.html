@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+    <div class="w3-container w3-center w3-padding-top-32">
+        <h1><b>{% if mitarbeiter %}Mitarbeiter bearbeiten{% else %}Mitarbeiter hinzufügen{% endif %}</b></h1>
+    </div>
+
+    <form method="POST" action="
+
+            {% if mitarbeiter %}{{ url_for('bp_mitarbeiter.edit_mitarbeiter', ma_id=mitarbeiter.ma_id) }}{% else %}{{ url_for('bp_mitarbeiter.add_mitarbeiter') }}{% endif %}"
+          class="w3-container w3-center">
+        <div class="w3-section w3-row-padding">
+            <label for="vorname" class="w3-col l3 w3-right-align bold">Vorname</label>
+            <input type="text" id="vorname" name="vorname" class="w3-input w3-border w3-col l9 w3-left-align"
+                   maxlength="20" value="{{ request.form.vorname or mitarbeiter.vorname if mitarbeiter else '' }}"
+                   required/>
+        </div>
+
+        <div class="w3-section w3-row-padding">
+            <label for="nachname" class="w3-col l3 w3-right-align">Nachname</label>
+            <input type="text" id="nachname" name="nachname" class="w3-input w3-border w3-col l9 w3-left-align"
+                   maxlength="30" value="{{ request.form.nachname or mitarbeiter.nachname if mitarbeiter else '' }}"
+                   required/>
+        </div>
+
+        <div class="w3-section w3-row-padding">
+            <label for="nds" class="w3-col l3 w3-right-align">NDS-Kennung</label>
+            <input type="text" id="nds" name="nds" class="w3-input w3-border w3-col l9 w3-left-align" maxlength="10"
+                   value="{{ request.form.nds or mitarbeiter.nds if mitarbeiter else '' }}" required/>
+        </div>
+
+        <div class="w3-section w3-row-padding">
+            <label for="email" class="w3-col l3 w3-right-align">Email</label>
+            <input type="email" id="email" name="email" class="w3-input w3-border w3-col l9 w3-left-align"
+                   maxlength="50" value="{{ request.form.email or mitarbeiter.email if mitarbeiter else '' }}"
+                   required/>
+        </div>
+
+        {% if is_admin %}
+            <!-- admin can create employees for every chair, for normal employees the lehrstuhl is automatically defined as the user.chair (see route for add/edit mitarbeiter) -->
+            <div class="w3-section w3-row-padding">
+                <label for="lehrstuhl" class="w3-col l3 w3-right-align">Lehrstuhl</label>
+                <select id="lehrstuhl" name="lehrstuhl" class="w3-select w3-border w3-col l9 w3-left-align" required>
+                    {% for lehrstuhl in lehrstuehle %}
+                        <option value="{{ lehrstuhl.lehrstuhl_id }}"
+                                {% if request.form.lehrstuhl == lehrstuhl.lehrstuhl_id|string or (mitarbeiter and mitarbeiter.lehrstuhl_lehrstuhl_id == lehrstuhl.lehrstuhl_id) %}selected{% endif %}>
+                            {{ lehrstuhl.professor }}: {{ lehrstuhl.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+        {% endif %}
+
+        <!-- buttons for submitting the form, delete the employee or go back to the profile -->
+        <div class="w3-row-padding w3-margin-bottom w3-center">
+            <input type="submit" value="{% if mitarbeiter %}Aktualisieren{% else %}Hinzufügen{% endif %}"
+                   class="w3-button w3-fids-color w3-large w3-margin-top w3-round"/>
+            {% if mitarbeiter %}
+                <a href="{{ url_for('bp_mitarbeiter.delete_mitarbeiter', ma_id=mitarbeiter.ma_id) }}"
+                   class="w3-button w3-fids-color w3-large w3-margin-top w3-round">Löschen</a>
+            {% endif %}
+
+        <!-- Go-Back button differentiates if the form was opened through admin panel or the employee profile -->
+            {% if is_admin %}
+                <a href="{{ url_for('bp_mitarbeiter.admin') }}"
+                   class="w3-button w3-fids-color w3-large w3-margin-top w3-round">Zurück</a>
+            {% else %}
+                <a href="{{ url_for('bp_mitarbeiter.profil') }}"
+                   class="w3-button w3-fids-color w3-large w3-margin-top w3-round">Zurück</a>
+            {% endif %}
+        </div>
+    </form>
+
+{% endblock %}

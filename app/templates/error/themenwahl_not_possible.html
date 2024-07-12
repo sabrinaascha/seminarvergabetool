@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block body %}
+    <div class="w3-container w3-center w3-padding-top-32">
+        <h1><b>Themenwahl nicht möglich.</b></h1>
+        <p>Es tut uns leid. Eine Priorisierung der Themen ist aufgrund Ihrer fehlenden Registrierung in Phase 1 nicht
+            möglich.</p>
+        <p>Falls sie Hilfe benötigen, wenden Sie sich bitte an unseren Systemadministrator.</p>
+
+        <div class="w3-container w3-padding-16">
+            <a href="{{ url_for('bp_index.index') }}"
+               class="w3-button w3-fids-color w3-padding-large w3-large w3-margin-top w3-round">Erneut Laden</a>
+        </div>
+    </div>
+{% endblock %}

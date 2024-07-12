@@ -1,0 +1,349 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+    <div class="w3-container w3-center w3-padding-top-32">
+        <h1>Admin Profil</h1>
+    </div>
+
+    <div class="w3-row">
+        <!-- sidebar for navigation/filter options -->
+        <div class="w3-col l3">
+            <div class="w3-bar-block w3-light-grey">
+                <!-- buttons to show different sections -->
+                <button class="w3-bar-item w3-button" onclick="showSection('Mitarbeiter')">Mitarbeiter</button>
+                <button class="w3-bar-item w3-button" onclick="showSection('Lehrstuhl')">Lehrstühle</button>
+                <button class="w3-bar-item w3-button" onclick="showSection('Projekte')">Projekte</button>
+                <button class="w3-bar-item w3-button" onclick="showSection('Studenten')">Studenten</button>
+                <button class="w3-bar-item w3-button" onclick="showSection('Phasen')">Phasen</button>
+            </div>
+            <div class="w3-padding">
+                <!-- toggle switch to go back from admin mode -->
+                <label class="switch">
+                    <input type="checkbox" id="admin" checked onchange="goBackFromAdmin()">
+                    <span class="slider round"></span>
+                </label>
+                <p class="w3-small">Admin</p>
+            </div>
+        </div>
+
+        <!--- mitarbeiter section ---->
+        <div class="w3-col l9 w3-container">
+            <div id="Mitarbeiter" class="w3-card-4 w3-margin-bottom w3-padding w3-hide">
+                <h3><b>Mitarbeiter</b>
+                    <a href="{{ url_for('bp_mitarbeiter.add_mitarbeiter') }}"
+                       class="w3-button w3-fids-color w3-right w3-small"><i class="fa fa-plus"></i></a>
+                </h3>
+                <div class="w3-row-padding w3-margin-bottom">
+                    <div class="w3-half">
+                        <!-- dropdown filter for lehrstuhl -->
+                        <label for="lehrstuhlMitarbeiterFilter" class="w3-label"></label>
+                        <select id="lehrstuhlMitarbeiterFilter" class="w3-select w3-border" onchange="filterMitarbeiter()">
+                            <option value="">Alle Lehrstühle</option>
+                            {% for lehrstuhl in lehrstuehle %}
+                                <option value="{{ lehrstuhl.lehrstuhl_id }}">{{ lehrstuhl.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="w3-half">
+                        <!-- input filter for mitarbeiter search -->
+                        <label for="keywordMitarbeiterFilter" class="w3-label"></label>
+                        <input id="keywordMitarbeiterFilter" type="text" class="w3-input w3-border"
+                               placeholder="Nach Mitarbeiter suchen..." oninput="filterMitarbeiter()">
+                    </div>
+                </div>
+                {% for lehrstuhl, mitarbeiter in mitarbeiter_dict.items() %}
+                    <div class="mitarbeiter-section" data-lehrstuhl="{{ lehrstuhl.lehrstuhl_id }}">
+                        <h5><b>{{ lehrstuhl.professor }}: {{ lehrstuhl.name }} </b></h5>
+                        <ul class="w3-ul w3-left-align">
+                            {% for m in mitarbeiter %}
+                                <li class="mitarbeiter-item">
+                                    <span class="w3-large">{{ m.vorname }} {{ m.nachname }}</span>
+                                    <a href="{{ url_for('bp_mitarbeiter.edit_mitarbeiter', ma_id=m.ma_id) }}"
+                                       class="w3-right w3-hover-text-grey fa fa-pencil w3-row-padding w3-text-black"></a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!--- lehrstuhl section ---->
+            <div id="Lehrstuhl" class="w3-card-4 w3-margin-bottom w3-padding w3-hide">
+                <h3><b>Lehrstühle</b>
+                    <a href="{{ url_for('bp_mitarbeiter.add_lehrstuhl') }}"
+                       class="w3-button w3-fids-color w3-right w3-small"><i class="fa fa-plus"></i></a>
+                </h3>
+                <ul class="w3-ul w3-left-align">
+                    {% for lehrstuhl in lehrstuehle %}
+                        <li>
+                            <span class="w3-large">{{ lehrstuhl.professor }}: {{ lehrstuhl.name }}</span>
+                            <a href="{{ url_for('bp_mitarbeiter.edit_lehrstuhl', lehrstuhl_id=lehrstuhl.lehrstuhl_id) }}"
+                               class="w3-right w3-margin-left w3-hover-text-grey fa fa-pencil w3-text-black"></a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!--- projekte section --->
+            <div id="Projekte" class="w3-card-4 w3-margin-bottom w3-padding">
+                <h3><b>Projekte</b>
+                    <a href="{{ url_for('bp_mitarbeiter.add_projekt') }}"
+                       class="w3-button w3-fids-color w3-right w3-small"><i class="fa fa-plus"></i></a>
+                </h3>
+                <div class="w3-row-padding w3-margin-bottom">
+                    <div class="w3-half">
+                        <!-- dropdown filter for lehrstuhl -->
+                        <label for="lehrstuhlFilter" class="w3-label"></label>
+                        <select id="lehrstuhlFilter" class="w3-select w3-border" onchange="filterProjects()">
+                            <option value="">Alle Lehrstühle</option>
+                            {% for lehrstuhl in lehrstuehle %}
+                                <option value="{{ lehrstuhl.lehrstuhl_id }}">{{ lehrstuhl.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="w3-half">
+                        <!-- dropdown filter for types -->
+                        <label for="artFilter" class="w3-label"></label>
+                        <select id="artFilter" class="w3-select w3-border" onchange="filterProjects()">
+                            <option value="">Alle Arten</option>
+                            {% for art in arten %}
+                                <option value="{{ art.art_id }}">{{ art.art_typ }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                {% for lehrstuhl, projekte in projekte_dict.items() %}
+                    <div class="w3-left-align projekt-section" data-lehrstuhl="{{ lehrstuhl.lehrstuhl_id }}">
+                        <h5><b>{{ lehrstuhl.professor }}: {{ lehrstuhl.name }} </b></h5>
+                        <ul class="w3-ul w3-left-align">
+                            {% for projekt in projekte %}
+                                <li class="projekt-item {{ projekt.art.get_color() }}" data-art="{{ projekt.art.art_id }}">
+                                    <div class="w3-row">
+                                        <div class="w3-col m11">
+                                            <span class="w3-large">{{ projekt.titel }}</span><br>
+                                            <span>
+                                                {% for b in projekt.betreuer %}
+                                                    {{- ' ' if not loop.first }}{{ b.vorname }} {{ b.nachname }}{{- ',' if not loop.last -}}
+                                                {% endfor %}
+                                            </span>
+                                        </div>
+                                        <div class="w3-col m1 w3-hide-small w3-center">
+                                            <!-- badge showing type of project -->
+                                            {% set color, text = projekt.art.get_badge() %}
+                                            <span class="w3-badge {{ color }}">{{ text }}</span><br>
+                                            <a href="{{ url_for('bp_mitarbeiter.edit_projekt', projekt_id=projekt.projekt_id) }}"
+                                               class="w3-hover-text-grey fa fa-pencil w3-text-black"></a>
+                                        </div>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- section for students -->
+<div class="w3-col l9 w3-container">
+    <div id="Studenten" class="w3-card-4 w3-margin-bottom w3-padding w3-hide">
+        <h3><b>Studenten</b>
+            <a href="{{ url_for('bp_mitarbeiter.add_student') }}"
+               class="w3-button w3-fids-color w3-right w3-small"><i class="fa fa-plus"></i></a>
+        </h3>
+        <div class="w3-row-padding w3-margin-bottom">
+            <!-- input filter for student search -->
+            <label for="keywordStudentFilter"></label>
+            <input id="keywordStudentFilter" type="text" class="w3-input w3-border"
+                   placeholder="Nach Student suchen..." oninput="filterStudents()">
+        </div>
+        <div class="student-section">
+            <ul class="w3-ul w3-left-align">
+                {% for s in students %}
+                    <li class="student-item w3-margin-bottom">
+                        <span class="w3-large">{{ s.vorname }} {{ s.nachname }}</span>
+                        <a href="{{ url_for('bp_mitarbeiter.edit_student', stud_id=s.stud_id) }}"
+                           class="w3-right w3-hover-text-grey fa fa-pencil w3-row-padding w3-text-black"></a>
+                        <a href="{{ url_for('bp_mitarbeiter.edit_priorities', stud_id=s.stud_id) }}"
+                           class="w3-right w3-hover-text-grey fa fa-list-ol w3-row-padding w3-text-black"></a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- section for phases -->
+<div id="Phasen" class="w3-card-4 w3-margin-bottom w3-padding w3-hide">
+    <h3><b>Phasen</b>
+        {% if phasen %}<a href="{{ url_for('bp_mitarbeiter.edit_phasen') }}"
+                          class="w3-button w3-fids-color w3-right w3-small"><i class="fa fa-pencil"></i></a> {% endif %}
+    </h3>
+    {% if phasen %}
+        <table class="w3-table-all w3-striped w3-bordered w3-centered">
+            <thead>
+            <tr>
+                <th>Phase</th>
+                <th>Start</th>
+                <th>Ende</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>Phase 1 (Registrierung)</td>
+                <td>{{ phasen.start_p1.strftime('%d.%m.%Y %H:%M') }}</td>
+                <td>{{ phasen.ende_p1.strftime('%d.%m.%Y %H:%M') }}</td>
+            </tr>
+            <tr>
+                <td>Vorstellung</td>
+                <td>{{ phasen.start_vorstellung.strftime('%d.%m.%Y %H:%M') }}</td>
+                <td>{{ phasen.ende_vorstellung.strftime('%d.%m.%Y %H:%M') }}</td>
+            </tr>
+            <tr>
+                <td>Phase 2 (Themenwahl)</td>
+                <td>{{ phasen.start_p2.strftime('%d.%m.%Y %H:%M') }}</td>
+                <td>{{ phasen.ende_p2.strftime('%d.%m.%Y %H:%M') }}</td>
+            </tr>
+            <tr>
+                <td>Phase 3 (Themenvergabe)</td>
+                <td>{{ phasen.start_p3.strftime('%d.%m.%Y %H:%M') }}</td>
+                <td>{{ phasen.ende_p3.strftime('%d.%m.%Y %H:%M') }}</td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="w3-padding-small">
+            <!-- button to end the current semester -->
+            <a href="{{ url_for('bp_mitarbeiter.delete_phasen') }}"
+               class="w3-button w3-fids-color w3-large w3-margin-top w3-round">Semester beenden</a>
+        </div>
+    {% else %}
+        <p>Keine Phaseninformationen verfügbar.</p>
+        <!-- button to add new phases -->
+        <a href="{{ url_for('bp_mitarbeiter.add_phasen') }}"
+           class="w3-button w3-fids-color w3-large w3-margin-top w3-round">Phasen einstellen</a>
+    {% endif %}
+</div>
+</div>
+</div>
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function () {
+    // always shows the section that was last viewed in the admin panel
+    const currentSection = localStorage.getItem('currentSection') || 'Projekte';
+    showSection(currentSection);
+    filterProjects();
+    filterMitarbeiter();
+});
+
+// function to show only the content of the selected section
+function showSection(sectionId) {
+    const sections = document.querySelectorAll('.w3-card-4');
+    sections.forEach(section => {
+        section.classList.add('w3-hide');
+    });
+    document.getElementById(sectionId).classList.remove('w3-hide');
+    localStorage.setItem('currentSection', sectionId);
+}
+
+// function to filter employees based on a keyword or on a selected chair
+function filterMitarbeiter() {
+    const lehrstuhlFilter = document.getElementById('lehrstuhlMitarbeiterFilter').value;
+    const keywordFilter = document.getElementById('keywordMitarbeiterFilter').value.toLowerCase();
+    const mitarbeiterSections = document.querySelectorAll('.mitarbeiter-section');
+
+    mitarbeiterSections.forEach(section => {
+        const lehrstuhlId = section.getAttribute('data-lehrstuhl');
+        let showSection = false;
+
+        if (!lehrstuhlFilter || lehrstuhlId === lehrstuhlFilter) {
+            const mitarbeiterItems = section.querySelectorAll('.mitarbeiter-item');
+            mitarbeiterItems.forEach(item => {
+                const mitarbeiterName = item.textContent.toLowerCase();
+                let showItem = true;
+
+                if (keywordFilter && !mitarbeiterName.includes(keywordFilter)) {
+                    showItem = false;
+                }
+
+                item.style.display = showItem ? 'block' : 'none';
+                if (showItem) {
+                    showSection = true;
+                }
+            });
+        }
+
+        section.style.display = showSection ? 'block' : 'none';
+    });
+}
+
+// function to filter projects based on the selected lehrstuhl and art within the dropdowns
+function filterProjects() {
+    const lehrstuhlFilter = document.getElementById('lehrstuhlFilter').value;
+    const artFilter = document.getElementById('artFilter').value;
+    const projektSections = document.querySelectorAll('.projekt-section');
+
+    projektSections.forEach(section => {
+        const lehrstuhlId = section.getAttribute('data-lehrstuhl');
+        let showSection = !lehrstuhlFilter || lehrstuhlId === lehrstuhlFilter;
+
+        const projektItems = section.querySelectorAll('.projekt-item');
+        let hasVisibleItems = false;
+
+        projektItems.forEach(item => {
+            const artId = item.getAttribute('data-art');
+            let showItem = true;
+
+            if (artFilter && artId !== artFilter) {
+                showItem = false;
+            }
+
+            item.style.display = showItem ? 'block' : 'none';
+            if (showItem) {
+                hasVisibleItems = true;
+            }
+        });
+
+        section.style.display = (showSection && hasVisibleItems) ? 'block' : 'none';
+    });
+}
+
+// function to filter students based on the keywords
+function filterStudents() {
+    const keywordFilter = document.getElementById('keywordStudentFilter').value.toLowerCase();
+    const studentSections = document.querySelectorAll('.student-section');
+
+    studentSections.forEach(section => {
+        let showSection = false;
+        const studentItems = section.querySelectorAll('.student-item');
+
+        studentItems.forEach(item => {
+            const studentName = item.textContent.toLowerCase();
+            let showItem = true;
+
+            if (keywordFilter && !studentName.includes(keywordFilter)) {
+                showItem = false;
+            }
+
+            item.style.display = showItem ? 'block' : 'none';
+            if (showItem) {
+                showSection = true;
+            }
+        });
+
+        section.style.display = showSection ? 'block' : 'none';
+    });
+}
+
+// go back from admin mode via toggle switch
+function goBackFromAdmin() {
+    var isChecked = document.getElementById('admin').checked;
+    if (isChecked) {
+        window.location.href = "{{ url_for('bp_mitarbeiter.admin') }}";
+    } else {
+        window.location.href = "{{ url_for('bp_mitarbeiter.profil') }}";
+    }
+}
+</script>
+
+{% endblock %}

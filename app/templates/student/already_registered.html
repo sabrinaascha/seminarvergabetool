@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+    <div class="w3-container w3-center w3-padding-top-32">
+        <h1><b>Registrierung</b></h1>
+        <p>Sie sind am Vergabeprozess mit folgenden Daten registriert:</p>
+    </div>
+
+<!-- displaying the students registration data  -->
+    <table class="w3-table w3-bordered">
+        <tr>
+            <th>Vorname</th>
+            <td>{{ student.vorname }}</td>
+        </tr>
+        <tr>
+            <th>Nachname</th>
+            <td>{{ student.nachname }}</td>
+        </tr>
+        <tr>
+            <th>NDS-Kennung</th>
+            <td>{{ student.nds }}</td>
+        </tr>
+        <tr>
+            <th>Email</th>
+            <td>{{ student.email }}</td>
+        </tr>
+        <tr>
+            <th>Matrikelnummer</th>
+            <td>{{ student.matrikelnummer }}</td>
+        </tr>
+        <tr>
+            <th>Studiengang</th>
+            <td>{{ student.studiengang.bezeichnung }} ({{ student.studiengang.abschluss }})</td>
+        </tr>
+        <tr>
+            <th>Registriert für</th>
+            <td>
+                {% for art in arten %}
+                    <p><i class="w3-text-green w3-margin-left fa fa-check-square"></i>{{ art.art_typ }}</p>
+                {% endfor %}
+            </td>
+        </tr>
+    </table>
+
+
+    <div class="w3-container w3-padding-small">
+        <a href="{{ url_for('bp_index.index') }}"
+           class="w3-button w3-fids-color w3-margin-top w3-round">Startseite</a>
+        <a href="{{ url_for('bp_student.profil') }}"
+           class="w3-button w3-fids-color w3-margin-top w3-round">Profil</a>
+    </div>
+
+{% endblock %}

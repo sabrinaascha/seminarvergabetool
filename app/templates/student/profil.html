@@ -1,52 +1,104 @@
-{% extends 'layout/layout.html' %}
+{% extends 'base.html' %}
 
-{% block pageContent %}
+{% block body %}
 
-<!-- Header -->
-<div class="w3-container w3-center w3-padding-16">
-    <h1><b>Profil</b></h1>
-</div>
+    <!-- header section for profile page -->
+    <div class="w3-container w3-center w3-padding-top-32">
+        <h1><b>Profil</b></h1>
+    </div>
 
-<div class="w3-container w3-margin-top">
-    <!-- Profil Section -->
-     <div id="Profil" class="w3-card-4 w3-margin-bottom w3-padding">
-        <div class="w3-row" style="display: flex; align-items: center;">
-            <div class="w3-quarter w3-center">
-                <i class="fa fa-user w3-jumbo"></i>
+    <div class="w3-container w3-margin-top">
+        <!-- profile section displaying user data -->
+        <div id="Profil" class="w3-card-4 w3-margin-bottom w3-padding">
+            <div class="w3-row" style="display: flex; align-items: center;">
+                <div class="w3-quarter w3-center">
+                    <i class="fa fa-user w3-jumbo"></i>
+                </div>
+                <div class="w3-threequarter w3-left-align">
+                    <h3><b>Deine Daten</b></h3>
+
+                    <!-- show registration button if phase1 is active -->
+                    {% if phase1_active %}
+                        <a href="{{ url_for('bp_student.register') }}"
+                           class="w3-button w3-fids-color w3-right w3-large w3-round">Registrieren</a>
+                    {% endif %}
+
+                    <!-- display student data if student is registered -->
+                    {% if student %}
+                        <p><b>Name:</b> {{ student.vorname }} {{ student.nachname }}</p>
+                        <p><b>NDS-Kennung:</b> {{ student.nds }}</p>
+                        <p><b>Matrikelnummer:</b> {{ student.matrikelnummer }}</p>
+                        <p><b>Registriert für:</b>
+                            {% for art in student.arten %}
+                                <i class="w3-text-green w3-margin-left fa fa-check-square"></i>{{ art.art_typ }}
+                            {% endfor %}
+                        </p>
+                    <!-- display current user data if student is not registered -->
+                    {% else %}
+                        <p><b>Name:</b> {{ current_user.vorname }} {{ current_user.nachname }}</p>
+                        <p><b>NDS-Kennung:</b> {{ current_user.nds }}</p>
+                        <p><b>Email:</b> {{ current_user.mail }}</p>
+
+                        <p><i class="fa fa-exclamation-triangle w3-text-red"></i>
+                            Sie sind nicht für den Vergabeprozess registriert
+                            <i class="fa fa-exclamation-triangle w3-text-red"></i></p>
+                    {% endif %}
+                </div>
             </div>
-            <div class="w3-threequarter w3-left-align">
-                <h3><b>Deine Daten</b></h3>
-                {% if student %}
-                    <p><b>Name:</b> {{ student.vorname }} {{ student.nachname }}</p>
-                    <p><b>NDS-Kennung:</b> {{ student.nds }}</p>
-                    <p><b>Matrikelnummer:</b> {{ student.matrikelnummer }}</p>
-                    <p><b>Registriert für:</b>
-                        {% for art in arten %}
-                            <i class="w3-text-green w3-margin-left fa fa-check-square"></i>{{ art.art_typ }}
-                        {% endfor %}
-                    </p>
-                {% else %}
-                    <p><b>Name:</b> {{ current_user.vorname }} {{ current_user.nachname }}</p>
-                    <p><b>NDS-Kennung:</b> {{ current_user.nds }}</p>
-                    <p><b>Email:</b> {{ current_user.mail }}</p>
+        </div>
 
-                    <p><i class="fa fa-exclamation-triangle w3-text-red"></i>
-                        Sie sind momentan nicht für den Vergabeprozess registriert
-                    <i class="fa fa-exclamation-triangle w3-text-red"></i></p>
+        <!-- section displaying student's priorities -->
+        <div id="Priorities" class="w3-card-4 w3-margin-bottom w3-padding">
+            <div class="w3-row" style="display: flex; align-items: center;">
+                <div class="w3-quarter w3-center">
+                    <i class="fa fa-list w3-jumbo"></i>
+                </div>
+                <div class="w3-threequarter w3-left-align">
+                    <h3><b>Deine Priorisierungen</b>
+                        {% if student %}
+                            <!-- show themenwahl button if phase2 is active -->
+                            {% if phase2_active %}
+                                <a href="{{ url_for('bp_student.themenwahl') }}"
+                                   class="w3-button w3-fids-color w3-right w3-large w3-round">Themenwahl</a>
+                            {% endif %} </h3>
+                            <div class="w3-row-padding">
+                                {% for art in arten %}
+                                    <h4>{{ art.art_typ }}</h4>
+                                    <!-- display priorities if available -->
+                                    {% if all_priorities[art.art_id] %}
+                                        <ul class="w3-ul">
+                                            {% for prio, projekt in all_priorities[art.art_id].items() %}
+                                                <li>
+                                                    <b>Priorität {{ prio }}:</b> {{ projekt.titel }}
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    <!-- show message if priorities are not available -->
+                                    {% else %}
+                                        {% if phase2_active %}
+                                            <p>Priorisierung liegt aktuell noch nicht vor.</p>
+                                        {% else %}
+                                            <p>Priorisierung aktuell noch nicht möglich.</p>
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
 
-                    <a href="{{ url_for('bp_auth.register')}}"
-                class="w3-button w3-fids-color w3-padding-large w3-large w3-margin-top w3-round">Registrieren</a>
-                {% endif %}
+                        <!-- message if student is not registered -->
+                        {% else %}
+                            </h3>
+                            {% if phase2_active %}
+                                <p>Sie sind nicht für die Vergabe registriert und haben daher nicht die Berechtigung zur
+                                    Themenwahl.</p>
+                            {% else %}
+                                <p>Priorisierung erst nach der Registrierung zu einem späteren Zeitpunkt möglich.</p>
+                            {% endif %}
+
+                        {% endif %}
+
+                </div>
             </div>
         </div>
     </div>
-
-    <div class="w3-row-padding w3-margin-bottom w3-center">
-        <a href="{{ url_for('bp_auth.register')}}"
-                class="w3-button w3-fids-color w3-padding-large w3-large w3-margin-top w3-round">Registrieren</a>
-        <a href="{{ url_for('bp_student.themenwahl')}}"
-                class="w3-button w3-fids-color w3-padding-large w3-large w3-margin-top w3-round">Themenwahl</a>
-    </div>
-</div>
 
 {% endblock %}

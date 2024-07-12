@@ -1,71 +1,103 @@
-{% extends 'layout/layout.html' %}
+{% extends 'base.html' %}
 
-{% block pageContent %}
+{% block body %}
 
-<!-- Header -->
-<div class="w3-container w3-center w3-padding-32">
-    <h1><b>Profil Informationen</b></h1>
-</div>
-
-<div class="w3-container w3-margin-top">
-     <div id="Profil" class="w3-card-4 w3-margin-bottom w3-padding">
-        <div class="w3-row" style="display: flex; align-items: center;">
-            <div class="w3-quarter w3-center">
-                <i class="fa fa-user w3-jumbo"></i>
-
-            </div>
-            <div class="w3-threequarter w3-left-align">
-                <h3><b>Dein Profil</b></h3>
-                <p><b>Name:</b> {{ mitarbeiter.vorname }} {{ mitarbeiter.nachname }}</p>
-                <p><b>NDS-Kennung:</b> {{ mitarbeiter.nds }}</p>
-                <p><b>Lehrstuhl:</b> {{ mitarbeiter.lehrstuhl.name }}</p>
-            </div>
-        </div>
+    <div class="w3-container w3-center w3-padding-top-32">
+        <h1><b>Profil Informationen</b></h1>
     </div>
 
-    <div id="Lehrstuhl" class="w3-card-4 w3-margin-bottom w3-padding">
-        <div class="w3-row" style="display: flex; align-items: center;">
-            <div class="w3-quarter w3-center">
-                <i class="fa fa-university w3-jumbo"></i>
-            </div>
-            <div class="w3-threequarter w3-left-align">
-                <h3> <b> Mitarbeiter: </b> {{ mitarbeiter.lehrstuhl.name }}
-                <a href="{{ url_for('bp_mitarbeiter.add_betreuer') }}" class="w3-button w3-fids-color w3-right w3-small">
-                        <i class="fa fa-plus"></i>
-                    </a> </h3>
-                <ul class="w3-ul">
-                    {% for lm in mitarbeiter.lehrstuhl.lehrstuhl_mitarbeiter %}
-                        <li>{{ lm.nachname }}, {{ lm.vorname }} ({{ lm.nds }})</li>
-                    {% endfor %}
-                </ul>
+    <div class="w3-container">
+        <div id="Profil" class="w3-card-4 w3-margin-bottom w3-padding">
+            <div class="w3-row" style="display: flex; align-items: center;">
+                <div class="w3-quarter w3-center">
+                    <i class="fa fa-user w3-jumbo"></i>
+                </div>
+                <div class="w3-threequarter w3-left-align">
+                    <h3><b>Dein Profil</b></h3>
+                    <!-- user details -->
+                    <p><b>Name:</b> {{ mitarbeiter.vorname }} {{ mitarbeiter.nachname }}</p>
+                    <p><b>NDS-Kennung:</b> {{ mitarbeiter.nds }}</p>
+                    <p><b>Lehrstuhl:</b> {{ mitarbeiter.lehrstuhl.name }}</p>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div id="Themen" class="w3-card-4 w3-margin-bottom w3-padding">
-        <div class="w3-row" style="display: flex; align-items: center;">
-            <div class="w3-quarter w3-center">
-                <i class="fa fa-book w3-jumbo"></i> <br>
+        <div id="Lehrstuhl" class="w3-card-4 w3-margin-bottom w3-padding">
+            <div class="w3-row" style="display: flex; align-items: center;">
+                <div class="w3-quarter w3-center">
+                    <i class="fa fa-university w3-jumbo"></i>
+                </div>
+                <div class="w3-threequarter w3-left-align">
+                    <h3><b> Mitarbeiter: </b>
+                        <!-- button to add new employee -->
+                        <a href="{{ url_for('bp_mitarbeiter.add_mitarbeiter') }}"
+                           class="w3-button w3-fids-color w3-right w3-small">
+                            <i class="fa fa-plus"></i>
+                        </a></h3>
+                    <h3> {{ mitarbeiter.lehrstuhl.name }}</h3>
+                    <!-- list of employees -->
+                    <ul class="w3-ul">
+                        {% for lm in mitarbeiter.lehrstuhl.lehrstuhl_mitarbeiter %}
+                            <li>{{ lm.nachname }}, {{ lm.vorname }} ({{ lm.nds }})
+                                <!-- edit employee with the pencil buttons -->
+                                <a href="{{ url_for('bp_mitarbeiter.edit_mitarbeiter', ma_id=lm.ma_id) }}"
+                                   class="w3-right w3-hover-text-grey fa fa-pencil w3-row-padding w3-text-black"></a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
             </div>
-            <div class="w3-threequarter w3-left-align">
-            <h3><b>Unsere Themen</b>
-                <a href="{{ url_for('bp_mitarbeiter.add_projekt') }}" class="w3-button w3-fids-color w3-right w3-small"><i class="fa fa-plus"></i></a></h3>
-                 <ul class="w3-ul">
-                    {% for projekt in projekte %}
-                    <li class="{{ projekt.art.get_color() }}">
+        </div>
 
+        <div id="Projekte" class="w3-card-4 w3-margin-bottom w3-padding">
+            <div class="w3-row" style="display: flex; align-items: center;">
+                <div class="w3-quarter w3-center">
+                    <i class="fa fa-book w3-jumbo"></i> <br>
+                </div>
+                <div class="w3-threequarter w3-left-align">
+                    <h3><b>Unsere Themen</b>
+                        <!-- button to add new project -->
+                        <a href="{{ url_for('bp_mitarbeiter.add_projekt') }}"
+                           class="w3-button w3-fids-color w3-right w3-small"><i class="fa fa-plus"></i></a></h3>
+                    <!-- list of projects from the chair-->
+                    <ul class="w3-ul">
+                        {% for projekt in projekte %}
+                            <li class="{{ projekt.art.get_color() }}">
                         <span>{{ projekt.titel }}
                             ({% for b in projekt.betreuer %}
                                 {{- ' ' if not loop.first }}{{ b.vorname }} {{ b.nachname }}{{- ',' if not loop.last -}}
                             {% endfor %})
                         </span>
-                        <a href="{{ url_for('bp_mitarbeiter.edit_projekt', projekt_id=projekt.projekt_id) }}" class="w3-right w3-text-black w3-hover-text-grey fa fa-pencil w3-text-black" ></a>
-                    </li>
-                    {% endfor %}
-                </ul>
+                                <!-- edit project via the pencil-button-->
+                                <a href="{{ url_for('bp_mitarbeiter.edit_projekt', projekt_id=projekt.projekt_id) }}"
+                                   class="w3-right w3-text-black w3-hover-text-grey fa fa-pencil w3-text-black"></a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
             </div>
         </div>
+
+        <div class="w3-row w3-center w3-padding-top-24">
+            <!-- toggle switch to go to admin mode -->
+            <label class="switch">
+                <input type="checkbox" id="admin" onchange="goAdmin()">
+                <span class="slider round"></span>
+                <p class="w3-small">admin</p>
+            </label>
+        </div>
     </div>
-</div>
+
+    <script>
+        // function to switch between admin and profile view
+        function goAdmin() {
+            var isChecked = document.getElementById('admin').checked;
+            if (isChecked) {
+                window.location.href = "{{ url_for('bp_mitarbeiter.admin') }}";
+            } else {
+                window.location.href = "{{ url_for('bp_mitarbeiter.profil') }}";
+            }
+        }
+    </script>
 
 {% endblock %}

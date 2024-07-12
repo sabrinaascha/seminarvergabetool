@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+
+    <!-- Displayed if user has not the necessary rights -->
+    <div class="w3-container w3-center w3-padding-top-32">
+        <h1 class="w3-text-red"><b>Fehler!</b></h1>
+    </div>
+
+    <div class="w3-panel w3-fids-color">
+        <p>Sie haben nicht die benötigten Berechtigungen um diese Seite zu erreichen...</p>
+        <p>Wenden Sie sich an die Administration des Seminarvergabesystems, falls Sie Hilfe brauchen.</p>
+    </div>
+
+
+    <div class="w3-container w3-padding-16">
+        <a href="{{ url_for('bp_index.index') }}"
+           class="w3-button w3-fids-color w3-padding-large w3-large w3-margin-top w3-round">Erneut Laden</a>
+    </div>
+
+
+{% endblock %}

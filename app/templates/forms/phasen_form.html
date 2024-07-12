@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+    <div class="w3-container w3-center w3-padding-top-32">
+        <h1><b>{% if phasen %}Phasen bearbeiten{% else %}Phasen hinzufügen{% endif %}</b></h1>
+    </div>
+
+    <form method="POST"
+          action="{{ url_for('bp_mitarbeiter.edit_phasen', phase_id=phasen.phase_id) if phasen else url_for('bp_mitarbeiter.add_phasen') }}"
+          class="w3-container w3-center">
+        {% if phasen %}
+            <h3>{{ phasen.semester }}</h3>
+        {% else %}
+            <div class="w3-section w3-row-padding">
+                <label for="semester" class="w3-col l3 w3-right-align">Semester:</label>
+                <div class="w3-col l4 w3-left-align">
+                    <input type="radio" id="winter" name="semester" value="Wintersemester">
+                    <label for="winter">Wintersemester</label>
+                    <input type="radio" id="sommer" name="semester" value="Sommersemester">
+                    <label for="sommer">Sommersemester</label>
+                </div>
+                <div class="w3-col l4">
+                    <input type="number" id="jahr" name="jahr" min="2020" max="2999" class="w3-input w3-border"
+                           required>
+                </div>
+            </div>
+        {% endif %}
+        <div class="w3-section w3-row-padding">
+            <label for="p1" class="w3-col l3 w3-right-align">Phase 1:</label>
+            <div class="w3-col l4">
+                <input type="datetime-local" id="start_p1" name="start_p1" class="w3-input w3-border"
+                       value="{{ request.form.start_p1 or (phasen.start_p1.strftime('%Y-%m-%dT%H:%M') if phasen and phasen.start_p1 else '') }}"
+                       required/>
+            </div>
+            <div class="w3-col l4">
+                <input type="datetime-local" id="ende_p1" name="ende_p1" class="w3-input w3-border"
+                       value="{{ request.form.ende_p1 or (phasen.ende_p1.strftime('%Y-%m-%dT%H:%M') if phasen and phasen.ende_p1 else '') }}"
+                       required/>
+            </div>
+        </div>
+
+        <div class="w3-section w3-row-padding">
+            <label for="vorstellung" class="w3-col l3 w3-right-align">Themenvergabe der Lehrstühle</label>
+            <div class="w3-col l4">
+                <input type="datetime-local" id="start_vorstellung" name="start_vorstellung" class="w3-input w3-border"
+                       value="{{ request.form.start_vorstellung or (phasen.start_vorstellung.strftime('%Y-%m-%dT%H:%M') if phasen and phasen.start_p1 else '') }}"
+                       required/>
+            </div>
+            <div class="w3-col l4">
+                <input type="datetime-local" id="ende_vorstellung" name="ende_vorstellung" class="w3-input w3-border"
+                       value="{{ request.form.ende_vorstellung or (phasen.ende_vorstellung.strftime('%Y-%m-%dT%H:%M') if phasen and phasen.ende_p1 else '') }}"
+                       required/>
+            </div>
+        </div>
+
+        <div class="w3-section w3-row-padding">
+            <label for="p2" class="w3-col l3 w3-right-align">Phase 2:</label>
+            <div class="w3-col l4">
+                <input type="datetime-local" id="start_p2" name="start_p2" class="w3-input w3-border"
+                       value="{{ request.form.start_p2 or (phasen.start_p2.strftime('%Y-%m-%dT%H:%M') if phasen and phasen.start_p2 else '') }}"
+                       required/>
+            </div>
+            <div class="w3-col l4">
+                <input type="datetime-local" id="ende_p2" name="ende_p2" class="w3-input w3-border"
+                       value="{{ request.form.ende_p2 or (phasen.ende_p2.strftime('%Y-%m-%dT%H:%M') if phasen and phasen.ende_p2 else '') }}"
+                       required/>
+            </div>
+        </div>
+
+        <div class="w3-section w3-row-padding">
+            <label for="p3" class="w3-col l3 w3-right-align">Phase 3:</label>
+            <div class="w3-col l4">
+                <input type="datetime-local" id="start_p3" name="start_p3" class="w3-input w3-border"
+                       value="{{ request.form.start_p3 or (phasen.start_p3.strftime('%Y-%m-%dT%H:%M') if phasen and phasen.start_p3 else '') }}"
+                       required/>
+            </div>
+            <div class="w3-col l4">
+                <input type="datetime-local" id="ende_p3" name="ende_p3" class="w3-input w3-border"
+                       value="{{ request.form.ende_p3 or (phasen.ende_p3.strftime('%Y-%m-%dT%H:%M') if phasen and phasen.ende_p3 else '') }}"
+                       required/>
+            </div>
+        </div>
+
+    <!-- buttons for submitting the form or rendering back to admin panel -->
+        <div class="w3-row-padding w3-margin-bottom w3-center">
+            <input type="submit" value="{% if phasen %}Aktualisieren{% else %}Hinzufügen{% endif %}"
+                   class="w3-button w3-fids-color w3-large w3-margin-top w3-round"/>
+            <a href="{{ url_for('bp_mitarbeiter.admin') }}"
+               class="w3-button w3-fids-color w3-large w3-margin-top w3-round">Zurück</a>
+        </div>
+    </form>
+
+{% endblock %}
